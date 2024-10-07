@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Button, Menu, Typography, Drawer, Space, Image } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MenuOutlined } from '@ant-design/icons';
 import './styles.css';
 import { playSwitchSound } from '../../functions';
 import plus_symbol from "../../assets/icons/plus_ymbol.png";
+import { MenuItems } from './MenuItems';
 
 const { Text } = Typography;
 
-const CustomHeader = ({ nickname, email, avatar, money, signOut }) => {
+const CustomHeader = ({ nickname, email, avatar, money }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const navigate = useNavigate();
+  const location = useLocation()
+  console.log("location:", location.pathname)
   
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
@@ -43,37 +45,23 @@ const CustomHeader = ({ nickname, email, avatar, money, signOut }) => {
             className="burgerMenuButton"
             icon={<MenuOutlined />}
             onClick={toggleDrawer}
-            style={{ display: 'none' }}  // Initially hidden; will be made visible on small screens
+            style={{ display: 'none' }}
           />
 
-          <section style={{ display: 'flex', justifyContent: 'flex-start', alignItems: "center" }} className='customHeader__menu'>
-            <Menu.Item key="carsStore" style={{ backgroundColor: 'transparent' }} className='customHeader__menuItem'>
-              <Link to="/carsStore">Cars Store</Link>
-            </Menu.Item>
-            <Menu.Item key="myCars" style={{ backgroundColor: 'transparent' }} className='customHeader__menuItem'>
-              <Link to="/myCars">My Cars</Link>
-            </Menu.Item>
-            <Menu.Item key="auctionsHub" style={{ backgroundColor: 'transparent' }} className='customHeader__menuItem'>
-              <Link to="/auctionsHub">Auctions</Link>
-            </Menu.Item>
-          </section>
-
+<MenuItems/>
           <section style={{ display: 'flex', alignItems: 'center' }}>
             <Link 
               to="store" 
               className={`storeLink ${isHovered ? 'scale-up' : 'scale-down'}`}
               onMouseEnter={() => setIsHovered(true)} 
               onMouseLeave={() => setIsHovered(false)}
+              style={{ background: 'transparent', borderLeft: location.pathname === "/store" && '1px solid red', borderRight: location.pathname === "/store" && '1px solid red' }}
             >
               <img src={plus_symbol} alt="plus_symbol" className="storeIcon" />
               <Text style={{ marginRight: 15 }} type="warning">{`$${money}`}</Text>
             </Link>
-            <Link to="/profileEditPage" className="customHeader__avatar">
-              <Text
-                style={{ marginRight: "5vw", color: "#fff", cursor: "pointer" }}
-              >
-                {nickname}
-              </Text>
+            <Link to="/profileEditPage" className="customHeader__avatar" style={{ background: 'transparent', borderLeft: location.pathname === "/profileEditPage" || location.pathname === "/achievements" && '1px solid red', borderRight: location.pathname === "/profileEditPage" && '1px solid red' }} >
+              <Typography.Text style={{ marginRight: 15, color: "#fff", fontSize: "1.4rem", fontWeight: "bold" }}>{nickname}</Typography.Text>
               <img src={avatar} alt="avatar" />
             </Link>
           </section>
@@ -113,7 +101,7 @@ const CustomHeader = ({ nickname, email, avatar, money, signOut }) => {
          </div>
         </Drawer>
       </Menu>
-      <div className="headerPlaceholder"></div> {/* Added to offset the content */}
+      <div className="headerPlaceholder"></div>
     </>
   );
 };

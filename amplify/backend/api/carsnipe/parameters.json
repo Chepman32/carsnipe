@@ -1,5 +1,6 @@
 {
   "AppSyncApiName": "carsnipe",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2024-10-07T12:14:16.870Z"
 }

@@ -39,7 +39,7 @@ export default function App() {
         const data = {
           nickname: username,
           email,
-          money: 1000,
+          money: 5000000,
           bidded: [],
           avatar: "avatar1",
           bio: "",

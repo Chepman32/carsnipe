@@ -1,135 +1,67 @@
-/* General background styling */
 .profile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f0f2f5;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    background: url('../../../assets/images/a9bdf515-102c-4bf3-abb4-afca1e533796.png');
-    background-size: cover;
-    background-position: center;
-    flex-direction: column; /* Stacks content for mobile */
-  }
-  
-  /* Profile box container */
-  .profile-box {
-    width: 40%;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-  }
-  
-  /* Avatar container styling */
-  .avatar-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  
-  /* Avatar styling */
-  .avatar-item {
-    cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 50%; /* Ensures avatars remain circular */
-    width: 80px;
-    height: 80px; /* Ensures avatars are always square */
-    object-fit: cover; /* Keeps image aspect ratio intact */
-  }
-  
-  /* Selected avatar border */
-  .avatar-item.selected {
-    border: 0.2vw solid #1890ff;
-  }
-  
-  /* Form item styling */
-  .input-field,
-  .textarea-field,
-  .save-button,
-  .signout-button {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .save-button {
-    height: 40px;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .signout-button {
-    margin-top: 16px;
-    height: 40px;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  /* Media Queries for Responsiveness */
-  
-  /* Tablet Devices (portrait) and smaller */
-  @media (max-width: 768px) {
-    .profile-container {
-      padding: 10px;
-    }
-  
-    .profile-box {
-      width: 80%; /* Wider profile box on smaller screens */
-    }
-  
-    .avatar-container {
-      flex-direction: column; /* Stack avatars vertically */
-      gap: 10px;
-    }
-  
-    .avatar-item {
-      width: 60px; /* Smaller avatar size */
-      height: 60px; /* Ensure they remain circular */
-    }
-  
-    .input-field,
-    .textarea-field {
-      font-size: 14px; /* Adjust input font size for mobile */
-    }
-  
-    .save-button,
-    .signout-button {
-      font-size: 14px; /* Adjust button font size for mobile */
-    }
-  }
-  
-  /* Mobile Devices (portrait) */
-  @media (max-width: 480px) {
-    .profile-box {
-      width: 90%; /* Further reduce profile box width on mobile */
-      padding: 16px;
-    }
-  
-    .avatar-container {
-      gap: 8px; /* Smaller gap between avatars */
-    }
-  
-    .avatar-item {
-      width: 50px; /* Smaller avatar size */
-      height: 50px; /* Ensure they remain circular */
-    }
-  
-    .input-field,
-    .textarea-field {
-      font-size: 12px; /* Adjust input font size even smaller for very small screens */
-    }
-  
-    .save-button,
-    .signout-button {
-      font-size: 12px; /* Adjust button font size */
-    }
-  }
-  
-  /* Large Desktop */
-  @media (min-width: 1200px) {
-    .profile-box {
-      width: 35%; /* Slightly narrower on large desktops */
-    }
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.profile-box {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 24px;
+}
+
+.avatar-item {
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.avatar-item.selected {
+  border-color: #1890ff;
+}
+
+.input-field {
+  margin-bottom: 16px;
+}
+
+.textarea-field {
+  margin-bottom: 16px;
+}
+
+.save-button {
+  margin-bottom: 16px;
+}
+
+.signout-button {
+  margin-top: 16px;
+}
+
+.achievementsButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #1890ff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.achievementsButton:hover {
+  background-color: #40a9ff;
+}

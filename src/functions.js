@@ -4,6 +4,12 @@ import * as mutations from './graphql/mutations'
 import SwitchSound from "./assets/audio/light-switch.mp3"
 import OpeningSound from "./assets/audio/opening.MP3"
 import ClosingSound from "./assets/audio/closing.MP3"
+import avatar1 from "./assets/images/avatars/633acd8e-6641-4ad5-93a7-a2a4a7eedd2a.jpg"
+import avatar2 from "./assets/images/avatars/df6a476f-b3ca-42c9-ab86-d3a8f539e7d8.jpg"
+import avatar3 from "./assets/images/avatars/images (1).jpeg"
+import avatar4 from "./assets/images/avatars/images (2).jpeg"
+import avatar5 from "./assets/images/avatars/images (3).jpeg"
+import avatar6 from "./assets/images/avatars/images.jpeg"
 
 const client = generateClient();
 
@@ -344,3 +350,20 @@ export const getCarsPerRow = () => {
   if (width < 1600) return 4;
   return 5;
 };
+
+export const selectAvatar = (avatar) => {
+  switch (avatar) {
+    case "avatar1":
+      return avatar1;
+    case "avatar2":
+      return avatar2;
+    case "avatar3":
+      return avatar3;
+    case "avatar4":
+      return avatar4;
+    case "avatar5":
+      return avatar5;
+    default:
+      return avatar1;
+  }
+}
