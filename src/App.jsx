@@ -20,6 +20,7 @@ import SuccessfulPayment from "./components/SuccessfulPayment";
 import PaymentError from "./components/PaymentError";
 import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/Store/ProfileEditPage/ProfileEditPage";
+import { selectAvatar } from "./functions";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -39,7 +40,7 @@ export default function App() {
         const data = {
           nickname: username,
           email,
-          money: 5000000,
+          money: 50000,
           bidded: [],
           avatar: "avatar1",
           bio: "",
@@ -64,7 +65,7 @@ export default function App() {
   const currentAuthenticatedUser = useCallback(async () => {
     try {
       const { username, userId, signInDetails } = await getCurrentUser();
-      console.log("username", username)
+      console.log("username", signInDetails.loginId)
       setEmail(signInDetails.loginId);
       const playersData = await client.graphql({
         query: listUsers,
@@ -74,7 +75,7 @@ export default function App() {
       const isNewUser = !playersList.some((pl) => pl.email === email);
       setIsNewUser(isNewUser);
       if (!user) {
-        createNewPlayer(username);
+        createNewPlayer(signInDetails.loginId);
       } else {
         setPlayerInfo(user);
         console.log("user:", user)
@@ -108,7 +109,7 @@ export default function App() {
                   username={playerInfo.nickname}
                   email={email}
                   nickname={playerInfo.nickname}
-                  avatar={playerInfo.avatar}
+                  avatar={selectAvatar(playerInfo.avatar)}
                 />
                 <Routes>
                 <Route

@@ -33,6 +33,7 @@
 
 .storeLink {
   margin-right: 1vw;
+  padding-left: 0.5vw;
   display: flex;
   align-items: center;
   transition: transform 0.3s ease; /* Shortened transition duration */

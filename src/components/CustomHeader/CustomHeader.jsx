@@ -13,7 +13,6 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const location = useLocation()
-  console.log("location:", location.pathname)
   
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
