@@ -140,9 +140,9 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
 
  return (
    <div className="cars">
-     {/* <Button type="primary" onClick={showModal} style={{ marginBottom: '20px' }}>
+     <Button type="primary" style={{ marginBottom: '20px' }}>
        Create New Car
-     </Button> */}
+     </Button>
      {carsLoading ? (
        <Spin size="large" fullscreen/>
      ) : (

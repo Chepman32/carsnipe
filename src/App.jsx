@@ -11,7 +11,7 @@ import { createUser } from "./graphql/mutations";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CarsStore from "./pages/CarPages/CarsStore";
 import MyCars from "./pages/CarPages/MyCars";
-import { Spin } from "antd";
+import { Spin } from "antd"; // Import Spin for loading
 import { getCurrentUser } from "aws-amplify/auth";
 import AuctionsHub from "./pages/AuctionPage/AuctionHub";
 import MyBids from "./pages/AuctionPage/MyBids";
@@ -21,6 +21,7 @@ import PaymentError from "./components/PaymentError";
 import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/Store/ProfileEditPage/ProfileEditPage";
 import { selectAvatar } from "./functions";
+import { Hub } from "aws-amplify/utils";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -46,12 +47,13 @@ export default function App() {
           bio: "",
         };
         if (isNewUser) {
-          await client.graphql({
+          const createdPlayer = await client.graphql({
             query: createUser,
             variables: { input: data },
           });
+          setPlayerInfo(createdPlayer?.data?.createUser);
+          console.log("Created new player:", createdPlayer);
         }
-        sessionStorage.setItem("signedInCars", "true");
       } catch (error) {
         console.error("Error creating new player:", error);
       } finally {
@@ -62,24 +64,31 @@ export default function App() {
     [email, isNewUser]
   );
 
+  const listener = async (data) => {
+    await createNewPlayer(data?.payload?.data?.nickname);
+    !playerInfo && !loading && window.location.reload();
+  }
+
+  Hub.listen("auth", listener);
+
   const currentAuthenticatedUser = useCallback(async () => {
     try {
       const { username, userId, signInDetails } = await getCurrentUser();
       console.log("username", signInDetails.loginId)
-      setEmail(signInDetails.loginId);
+      setEmail(signInDetails?.loginId);
       const playersData = await client.graphql({
         query: listUsers,
       });
-      const playersList = playersData.data.listUsers.items;
-      const user = playersList.find((u) => u.email === signInDetails.loginId);
-      const isNewUser = !playersList.some((pl) => pl.email === email);
+      const playersList = playersData?.data?.listUsers.items;
+      const user = playersList.find((u) => u?.email === signInDetails?.loginId);
+      const isNewUser = !playersList.some((pl) => pl?.email === email);
       setIsNewUser(isNewUser);
       if (!user) {
-        createNewPlayer(signInDetails.loginId);
+        createNewPlayer(signInDetails?.loginId);
       } else {
         setPlayerInfo(user);
         console.log("user:", user)
-        setMoney(user.money);
+        setMoney(user?.money);
         setLoading(false);
       }
     } catch (err) {
@@ -91,10 +100,21 @@ export default function App() {
   useEffect(() => {
     currentAuthenticatedUser();
     document.title = "Virtual cars";
-  }, [currentAuthenticatedUser]);
+  }, [currentAuthenticatedUser, playerInfo]);
 
   if (loading || creatingUser) {
-    return <Spin fullscreen />;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (
