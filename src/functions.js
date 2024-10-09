@@ -367,3 +367,7 @@ export const selectAvatar = (avatar) => {
       return avatar1;
   }
 }
+
+export function extractNameFromEmail(email) {
+  return email.split('@')[0];
+}

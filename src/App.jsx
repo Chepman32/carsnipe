@@ -21,7 +21,7 @@ import SuccessfulPayment from "./components/SuccessfulPayment";
 import PaymentError from "./components/PaymentError";
 import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/Store/ProfileEditPage/ProfileEditPage";
-import { selectAvatar } from "./functions";
+import { extractNameFromEmail, selectAvatar } from "./functions";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -57,13 +57,12 @@ export default function App() {
       }
 
       const newUserData = {
-        nickname: username,
-        email: email,
+        nickname: extractNameFromEmail(username) || username,
+        email,
         money: 100000,
         bidded: [],
         avatar: "avatar1",
         bio: "",
-        createdAt: new Date().toISOString()
       };
 
       const createdPlayer = await client.graphql({
