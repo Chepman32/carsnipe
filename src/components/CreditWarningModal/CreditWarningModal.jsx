@@ -1,6 +1,7 @@
 // src/components/CreditWarningModal.js
 import React, { useState } from 'react';
 import { Modal, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 export const CreditWarningModal = ({ isModalVisible, setIsModalVisible }) => {
 
@@ -8,9 +9,10 @@ export const CreditWarningModal = ({ isModalVisible, setIsModalVisible }) => {
     setIsModalVisible(true);
   };
 
+  const navigate = useNavigate()
+
   const handleOk = () => {
-    // Handle "Add Credits" action, e.g., redirect to payment page
-    console.log('Redirect to add credits page');
+    navigate('/store')
     setIsModalVisible(false);
   };
 
