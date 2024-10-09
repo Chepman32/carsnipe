@@ -7,6 +7,7 @@ import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
 import CarCard from "./CarCard";
 import { createNewUserCar, playSwitchSound, playOpeningSound, playClosingSound } from "../../functions";
+import { CreditWarningModal } from "../../components/CreditWarningModal/CreditWarningModal";
 
 const { Option } = Select;
 const client = generateClient();
@@ -18,7 +19,8 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
  const [selectedCar, setSelectedCar] = useState(null);
  const [form] = Form.useForm();
  const [carDetailsVisible, setCarDetailsVisible] = useState(false);
- const [selectedCarIndex, setSelectedCarIndex] = useState(0);
+  const [selectedCarIndex, setSelectedCarIndex] = useState(0);
+  const [creditWarningModalvisible, setCreditWarningModalvisible] = useState(false);
  const [carsLoading, setCarsLoading] = useState(true);
 
  const carsContainerRef = useRef(null);
@@ -71,7 +73,7 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
  }, [cars, selectedCarIndex, carDetailsVisible]);
 
  const buyCar = async (car) => {
-   if (playerInfo && playerInfo.id) {
+   if (playerInfo && playerInfo.id && money >= car.price) {
      playSwitchSound();
      setMoney(money - car.price);
      try {
@@ -98,6 +100,11 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
        setLoadingBuy(false);
        setSelectedCar(null);
      }
+   }
+   else if (playerInfo && money < car.price) {
+     setCreditWarningModalvisible(true);
+     handleCarDetailsCancel();
+     return
    }
  };
 
@@ -140,9 +147,9 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
 
  return (
    <div className="cars">
-     <Button type="primary" style={{ marginBottom: '20px' }}>
+     {/* <Button type="primary" style={{ marginBottom: '20px' }}>
        Create New Car
-     </Button>
+     </Button> */}
      {carsLoading ? (
        <Spin size="large" fullscreen/>
      ) : (
@@ -217,6 +224,7 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
        buyCar={buyCar}
        loadingBuy={loadingBuy}
      />
+     <CreditWarningModal isModalVisible={creditWarningModalvisible} setIsModalVisible={setCreditWarningModalvisible} />
    </div>
  );
 };
