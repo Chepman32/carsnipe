@@ -99,7 +99,7 @@ export default function App() {
 
   useEffect(() => {
     currentAuthenticatedUser();
-    document.title = "Virtual cars";
+    document.title = "Carsnipe Online";
   }, [currentAuthenticatedUser, playerInfo]);
 
   if (loading || creatingUser) {
