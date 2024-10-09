@@ -21,14 +21,7 @@ export const CreditWarningModal = ({ isModalVisible, setIsModalVisible }) => {
   };
 
   return (
-    <div>
-      {/* Trigger button to open the modal */}
-      <Button type="primary" onClick={showModal}>
-        Check Credits
-      </Button>
-
-      {/* The Modal itself */}
-      <Modal
+    <Modal
         title="Insufficient Credits"
         visible={isModalVisible}
         onOk={handleOk}
@@ -39,6 +32,5 @@ export const CreditWarningModal = ({ isModalVisible, setIsModalVisible }) => {
       >
         <p>You have insufficient credits to perform this action. Please add more credits to continue.</p>
       </Modal>
-    </div>
   );
 };

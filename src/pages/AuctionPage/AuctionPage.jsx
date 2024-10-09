@@ -9,6 +9,7 @@ import AuctionPageItem from "./AuctionPageItem";
 import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
 import AuctionActionsModal from "./AuctionActionsModal";
 import AuctionMobilePageItem from "./MobileAuctionPageItem";
+import { CreditWarningModal } from "../../components/CreditWarningModal/CreditWarningModal";
 
 const client = generateClient();
 
@@ -18,6 +19,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   const [loadingBuy, setLoadingBuy] = useState(false);
   const [selectedAuction, setSelectedAuction] = useState(null);
   const [auctionActionsVisible, setAuctionActionsVisible] = useState(false);
+  const [creditWarningModalvisible, setCreditWarningModalvisible] = useState(false);
   const auctionContainerRef = useRef(null);
 
   const handleAuctionActionsShow = () => {
@@ -60,7 +62,12 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
 
   const increaseBid = async (auction) => {
     try {
-      setLoadingBid(true);
+      if(money < auction.buy) {
+        setCreditWarningModalvisible(true);
+        return;
+      }
+      else {
+        setLoadingBid(true);
       const userBidded = await fetchUserBiddedList(playerInfo.id);
       let increasedBidValue = Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
 
@@ -109,6 +116,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
 
       const currentIndex = auctions.indexOf(auction);
       listAuctions(currentIndex);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -230,6 +238,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   
   const handleItemClick = (clickedAuction) => {
     setSelectedAuction(clickedAuction);
+    playOpeningSound();
     handleAuctionActionsShow();
   };
 
@@ -281,6 +290,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         buyCar={buyItem}
         loadingBuy={loadingBuy}
       />
+      <CreditWarningModal isModalVisible={creditWarningModalvisible} setIsModalVisible={setCreditWarningModalvisible} />
     </div>
   );
 }
