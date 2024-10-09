@@ -64,10 +64,14 @@ const AuctionActionsModal = ({ visible, handleAuctionActionsCancel, selectedAuct
       onCancel={handleAuctionActionsCancel}
       footer={null}
     >
-      <AuctionActionsModalRow text={loadingBid ? <Spin /> : "Make a bid"} handler={() => bid(selectedAuction)} selected={focusedRow === 0} />
-      <AuctionActionsModalRow text={loadingBuy ? <Spin /> : "Buy out"} handler={buyCar} selected={focusedRow === 1} />
+      {
+        selectedAuction.status === "Active" && <AuctionActionsModalRow text={loadingBid ? <Spin /> : "Make a bid"} handler={() => bid(selectedAuction)} selected={focusedRow === 0} />
+      }
+      {
+        selectedAuction.status === "Active" && <AuctionActionsModalRow text={loadingBuy ? <Spin /> : "Buy out"} handler={buyCar} selected={focusedRow === 1} />
+      }
       <AuctionActionsModalRow
-        text={loadingBuy ? <Spin /> : "Open user's profile"}
+        text={"Open user's profile"}
         handler={async () => {
         const user = await fetchAuctionCreator(selectedAuction.id);
         const { id } = user;

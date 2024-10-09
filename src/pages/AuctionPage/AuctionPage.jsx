@@ -127,7 +127,12 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   
   const buyItem = async () => {
     try {
-      setLoadingBuy(true);
+      if (money < selectedAuction.buy) {
+        setCreditWarningModalvisible(true);
+        return;
+      }
+      else if (money >= selectedAuction.buy) {
+        setLoadingBuy(true);
       
       const userBiddedList = await fetchUserBiddedList(playerInfo.id);
       const userBidOnThisAuction = userBiddedList.find(bid => bid.auctionId === selectedAuction.id);
@@ -183,6 +188,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
       message.success('Car successfully bought!');
   
       listAuctions();
+      }
     } catch (error) {
       console.error(error);
     } finally {

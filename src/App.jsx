@@ -22,6 +22,7 @@ import PaymentError from "./components/PaymentError";
 import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/Store/ProfileEditPage/ProfileEditPage";
 import { extractNameFromEmail, selectAvatar } from "./functions";
+import AchievementList from "./pages/AchievementList/AchievementList";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -219,8 +220,8 @@ export default function App() {
                     }
                   />
                   <Route
-                    path="/successfulPayment"
-                    element={<SuccessfulPayment playerInfo={playerInfo} />}
+                    path="/achievements"
+                    element={<AchievementList playerInfo={playerInfo} />}
                   />
                   <Route 
                     path="/paymentError" 
