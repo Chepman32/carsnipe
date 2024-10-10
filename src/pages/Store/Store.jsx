@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./store.css";
-import coin_symbol from "../../assets/icons/coin_symbol.webp"
+import coin_symbol from "../../assets/icons/coin_symbol.png"
 import { Link } from "react-router-dom";
 
 const StoreItemCard = ({ item, email, username }) => {
