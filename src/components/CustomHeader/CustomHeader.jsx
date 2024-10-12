@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Menu, Typography, Drawer, Space, Image } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { isMobile } from 'react-device-detect';
 import { MenuOutlined } from '@ant-design/icons';
 import './styles.css';
 import { playSwitchSound } from '../../functions';
@@ -67,9 +66,7 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
           </section>
         </div>
 
-        {
-          isMobile && (
-            <Drawer
+        <Drawer
           title={"Menu"}
           placement="left"
           onClose={toggleDrawer}
@@ -102,8 +99,6 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
             </Link>
          </div>
         </Drawer>
-          )
-        }
       </Menu>
       <div className="headerPlaceholder"></div>
     </>
