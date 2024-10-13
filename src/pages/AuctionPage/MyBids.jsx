@@ -4,8 +4,8 @@ import "@aws-amplify/ui-react/styles.css";
 import { List, Form, Input, Button, Card, Col, Row, Typography, Flex, Select, message, Spin, Space } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
-import { listAuctions as listAuctionsQuery } from '../../graphql/queries';
-import { calculateTimeDifference, fetchUserCarsRequest } from "../../functions";
+import { listAuctions as listAuctionsQuery, getAuction as getAuctionQuery } from '../../graphql/queries';
+import { calculateTimeDifference, fetchUserBiddedList, fetchUserCarsRequest } from "../../functions";
 import AuctionPageItem from "./AuctionPageItem";
 import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
 import AuctionActionsModal from "./AuctionActionsModal";
@@ -27,6 +27,7 @@ export default function MyBids({ playerInfo, setMoney, money }) {
   const [selectedAuction, setSelectedAuction] = useState(null);
   const [auctionActionsVisible, setAuctionActionsVisible] = useState(false);
 
+
   const handleAuctionActionsShow = () => {
     setAuctionActionsVisible(true);
   };
@@ -41,25 +42,29 @@ export default function MyBids({ playerInfo, setMoney, money }) {
 
   const listAuctions = useCallback(async () => {
     try {
-      const auctionData = await client.graphql({ query: listAuctionsQuery });
-      const auctions = auctionData.data.listAuctions.items.map(auction => {
-        const endTime = new Date(parseInt(auction.endTime) * 1000);
-        const timeLeft = calculateTimeDifference(endTime);
+      const userBidded = await fetchUserBiddedList(playerInfo.id);
+      const auctionIds = userBidded.map(bid => bid.auctionId);
 
-        return {
-          ...auction,
-          endTime,
-          timeLeft
-        };
+      const auctionPromises = auctionIds.map(async (id) => {
+        const auctionData = await client.graphql({
+          query: getAuctionQuery,
+          variables: { id },
+        });
+        const auction = auctionData.data.getAuction;
+
+        // Convert endTime from timestamp to Date object
+        auction.endTime = new Date(auction.endTime * 1000); // Assuming endTime is in seconds
+
+        return auction; // Return the modified auction
       });
-      const filtered = auctions.filter(auction => auction.lastBidPlayer === playerInfo.nickname)
 
-      setAuctions(filtered);
-      filtered.length > 0 && !selectedAuction && setSelectedAuction(filtered[0]);
+      const auctions = await Promise.all(auctionPromises);
+      setAuctions(auctions);
+      auctions.length > 0 && !selectedAuction && setSelectedAuction(auctions[0]);
     } catch (error) {
       console.error("Error fetching auctions:", error);
     }
-  }, []);
+  }, [playerInfo.id, selectedAuction]);
 
   const increaseBid = async (auction) => {
     try {
@@ -75,7 +80,7 @@ export default function MyBids({ playerInfo, setMoney, money }) {
         currentBid: increasedBidValue,
         endTime: auction.endTime,
         lastBidPlayer: playerInfo.nickname,
-        status: increasedBidValue < auction.buy ? "active" : "finished",
+        status: increasedBidValue < auction.buy ? "Active" : "Finished",
       };
       await client.graphql({
         query: mutations.updateAuction,
@@ -182,6 +187,25 @@ export default function MyBids({ playerInfo, setMoney, money }) {
   const handleItemClick = (selectedAuction) => {
     setSelectedAuction(selectedAuction);
     handleAuctionActionsShow();
+  };
+
+  const getAuctionInfoById = async (auctionId) => {
+    try {
+      const auctionData = await client.graphql({
+        query: getAuctionQuery,
+        variables: { id: auctionId },
+      });
+      return auctionData.data.getAuction; // Return the auction data
+    } catch (error) {
+      console.error("Error fetching auction info:", error);
+    }
+  };
+
+  // Example usage of getAuctionInfoById
+  const handleAuctionSelect = async (auctionId) => {
+    const auctionInfo = await getAuctionInfoById(auctionId);
+    console.log("Selected Auction Info:", auctionInfo);
+    // You can set the auction info to state or handle it as needed
   };
 
   return (

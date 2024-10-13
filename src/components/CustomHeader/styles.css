@@ -98,6 +98,10 @@ height: 20px;
 }
 
 @media (max-width: 768px) {
+  .burgerMenuButton {
+    display: block;
+  }
+
   .customHeader__menu, .customHeader__avatar {
     display: none;
   }
@@ -112,6 +116,9 @@ height: 20px;
 }
 
 @media (min-width: 768px) {
+  .burgerMenuButton {
+    display: none;
+  }
 
   .customHeader__avatar {
     display: flex;

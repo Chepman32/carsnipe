@@ -1,0 +1,96 @@
+.mainPage {
+  display: flex;
+  padding: 20px;
+  background: #d6d8a3;
+  height: 100vh;
+}
+
+.mainPage a {
+  text-decoration: none;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tile {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.column:first-child .tile:first-child,
+.column:first-child .tile:last-child,
+.column:last-child .tile:first-child,
+.column:last-child .tile:last-child {
+  width: 24vw;
+}
+
+.column:first-child .tile:first-child {
+  background: rgba(0, 255, 0, 0.5);
+  height: 50%;
+}
+
+.column:first-child .tile:last-child {
+  background: yellow;
+  height: 50%;
+}
+
+.column:nth-child(2) .tile {
+  background: url(../../assets/images/auctionsHub.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 50vw;
+  height: 100%;
+  color: white;
+}
+
+.column:last-child .tile:first-child {
+  background: rgb(192, 108, 55);
+  height: 50%;
+}
+
+.column:last-child .tile:last-child {
+  background: silver;
+  height: 50%;
+}
+
+.focused {
+  border: 4px solid red;
+}
+
+.mainActionsModal__row {
+  height: 6vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+  background: #528a4c;
+  font-size: 2vh;
+  font-weight: 600;
+}
+
+.mainHub__card:hover {
+  border: 2px solid red;
+}
+
+.mainpage__cardText_black {
+  background-color: rgba(255, 255, 255, 0.7);
+  font-size: 5vh;
+  font-weight: 600;
+  color: #333;
+  padding: .3vh 1.5vh;
+  border-radius: .7vh;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.activeCard {
+  border: .2rem solid red;
+  border-radius: 15px;
+}

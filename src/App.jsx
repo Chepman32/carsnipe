@@ -23,6 +23,7 @@ import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/Store/ProfileEditPage/ProfileEditPage";
 import { extractNameFromEmail, selectAvatar } from "./functions";
 import AchievementList from "./pages/AchievementList/AchievementList";
+import { MainPage } from "./pages/MainPage/MainPage";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -155,6 +156,15 @@ export default function App() {
                   avatar={selectAvatar(playerInfo.avatar)}
                 />
                 <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <MainPage
+                        playerInfo={playerInfo}
+                        currentAuthenticatedUser={currentAuthenticatedUser}
+                      />
+                    }
+                  />
                   <Route
                     path="/profileEditPage"
                     element={

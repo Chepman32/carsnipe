@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Menu, Typography, Drawer, Space, Image } from 'antd';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Button, Menu, Typography, Drawer } from 'antd';
+import { Link, useLocation } from 'react-router-dom';
 import { MenuOutlined } from '@ant-design/icons';
 import './styles.css';
-import { playSwitchSound } from '../../functions';
 import plus_symbol from "../../assets/icons/plus_ymbol.png";
 import { MenuItems } from './MenuItems';
 
@@ -17,6 +16,10 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+
+  if (location.pathname === "/") {
+    return null;
+  }
 
   return (
     <>
@@ -74,16 +77,16 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
           width={"60vw"}
         >
           <div className="header__drawer">
-            <Link to="/carsStore" className="header__drawer__item" onClick={() => setDrawerVisible(false)}>
+            <Link to="/carsStore" className="header__drawer__item" onClick={toggleDrawer}>
               <Text strong>Cars Store</Text>
             </Link>
-            <Link to="/myCars" className="header__drawer__item" onClick={() => setDrawerVisible(false)}>
+            <Link to="/myCars" className="header__drawer__item" onClick={toggleDrawer}>
               <Text strong>My Cars</Text>
             </Link>
-            <Link to="/auctionsHub" className="header__drawer__item" onClick={() => setDrawerVisible(false)}>
+            <Link to="/auctionsHub" className="header__drawer__item" onClick={toggleDrawer}>
               <Text strong>Auctions</Text>
             </Link>
-            <Link to="store" className="header__drawer__item store" onClick={() => setDrawerVisible(false)}>
+            <Link to="store" className="header__drawer__item store" onClick={toggleDrawer}>
                 <img src={plus_symbol} alt="plus_ymbol" className="storeIcon" />
                 <Text strong>{`$${money}`}</Text>
               </Link>

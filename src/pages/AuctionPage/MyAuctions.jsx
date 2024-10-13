@@ -52,7 +52,7 @@ export default function MyAuctions({ playerInfo, setMoney, money }) {
           timeLeft
         };
       });
-      const filtered = auctions.filter(auction => auction.player === playerInfo.nickname)
+      const filtered = auctions.filter(auction => auction.player === playerInfo?.nickname)
 
       setAuctions(filtered);
       filtered.length > 0 && !selectedAuction && setSelectedAuction(filtered[0]);

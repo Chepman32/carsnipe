@@ -96,7 +96,7 @@ const MyCars = ({ playerInfo }) => {
      endTime,
      status: 'Active',
      lastBidPlayer: '',
-     player: playerInfo.nickname,
+     player: playerInfo?.nickname,
      buy: selectedCar.price,
      minBid,
    };

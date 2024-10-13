@@ -263,6 +263,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
                 isSelected={auction === selectedAuction}
                 handleAuctionActionsShow={handleAuctionActionsShow}
                 handleItemClick={handleItemClick}
+                playerInfo={playerInfo}
               />
             )
           )
