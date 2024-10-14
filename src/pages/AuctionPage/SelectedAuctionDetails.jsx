@@ -36,8 +36,8 @@ export const SelectedAuctionDetails = ({ selectedAuction }) => {
             <Flex direction="column" align="center" style={{ marginTop: '20px', minWidth: "100%", justifyContent: "space-between" }}>
               <div className="selectedAuction__avatar">
                 <img src={selectAvatar(avatar)} alt="Avatar" />
+                <Typography.Text className="subText">{selectedAuction?.lastBidPlayer}</Typography.Text>
               </div>
-              <Typography.Text className="subText">{selectedAuction?.lastBidPlayer}</Typography.Text>
               <Space direction="vertical" style={{width: "50%"}}>
                 <div style={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                   <Typography.Text className="subText">{`${selectedAuction?.currentBid ? "Highest" : "Start"} Bid:`}&nbsp;</Typography.Text>
