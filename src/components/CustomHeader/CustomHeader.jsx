@@ -24,7 +24,7 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
   // Added effect to handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1024);
     };
 
     window.addEventListener('resize', handleResize);

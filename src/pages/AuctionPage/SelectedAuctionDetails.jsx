@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Space, Typography, Col, Flex } from "antd";
-import { calculateTimeDifference } from '../../functions';
+import { calculateTimeDifference, fetchAuctionUser, selectAvatar } from '../../functions';
+import "./auctionPage.css"
 
 const getImageSource = (make, model) => {
   const imageName = `${make} ${model}.png`;
@@ -8,6 +9,15 @@ const getImageSource = (make, model) => {
 };
 
 export const SelectedAuctionDetails = ({ selectedAuction }) => {
+  const [avatar, setAvatar] = React.useState(null);
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      const auctionUser = await fetchAuctionUser(selectedAuction?.id);
+      setAvatar(auctionUser.avatar);
+    }
+    getAvatar()
+  }, [selectedAuction]);
   return (
     <Col className="auctionDetails" span={12} style={{ height: '100%', padding: '20px' }}>
       {selectedAuction && (
@@ -24,8 +34,11 @@ export const SelectedAuctionDetails = ({ selectedAuction }) => {
               />
             </div>
             <Flex direction="column" align="center" style={{ marginTop: '20px', minWidth: "100%", justifyContent: "space-between" }}>
+              <div className="selectedAuction__avatar">
+                <img src={selectAvatar(avatar)} alt="Avatar" />
+              </div>
               <Typography.Text className="subText">{selectedAuction?.lastBidPlayer}</Typography.Text>
-              <Space direction="vertical" style={{width: "50%",}}>
+              <Space direction="vertical" style={{width: "50%"}}>
                 <div style={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                   <Typography.Text className="subText">{`${selectedAuction?.currentBid ? "Highest" : "Start"} Bid:`}&nbsp;</Typography.Text>
                   <Typography.Text className="price bid">{selectedAuction?.currentBid || selectedAuction.minBid}</Typography.Text>
