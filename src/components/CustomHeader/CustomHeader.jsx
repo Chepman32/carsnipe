@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Menu, Typography, Drawer } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
+import { isMobile } from 'react-device-detect';
 import { MenuOutlined } from '@ant-design/icons';
 import './styles.css';
 import plus_symbol from "../../assets/icons/plus_ymbol.png";
@@ -11,10 +12,9 @@ import { MenuItems } from './MenuItems';
 
 const { Text } = Typography;
 
-const CustomHeader = ({ nickname, email, avatar, money }) => {
+const CustomHeader = ({ nickname, avatar, money }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
 
   const toggleDrawer = () => {
@@ -24,7 +24,6 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
   // Added effect to handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
     };
 
     window.addEventListener('resize', handleResize);
@@ -70,7 +69,7 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
 
           <section style={{ display: 'flex', alignItems: 'center' }}>
             <Link 
-              to="store" 
+              to="store"
               className={`storeLink ${isHovered ? 'scale-up' : 'scale-down'}`}
               onMouseEnter={() => setIsHovered(true)} 
               onMouseLeave={() => setIsHovered(false)}
@@ -86,7 +85,9 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
           </section>
         </div>
 
-        <Drawer
+        {
+          isMobile && (
+            <Drawer
           title={"Menu"}
           placement="left"
           onClose={toggleDrawer}
@@ -120,6 +121,8 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
             </Link>
           </div>
         </Drawer>
+          )
+        }
       </Menu>
       <div className="headerPlaceholder"></div>
     </>

@@ -133,10 +133,6 @@ height: 20px;
     height: 56px; /* Adjusted height for smaller screens */
   }
 
-  .customHeader__menuItem {
-    display: none;
-  }
-
   .storeLink {
     margin-right: 0.5vw; /* Adjusted margin for store link */
   }
@@ -145,10 +141,6 @@ height: 20px;
 @media (max-width: 768px) {
   .burgerMenuButton {
     display: block;
-  }
-
-  .customHeader__menu, .customHeader__avatar {
-    display: none;
   }
 
   .customHeader {
@@ -169,10 +161,6 @@ height: 20px;
 }
 
 @media (min-width: 768px) {
-  .burgerMenuButton {
-    display: none;
-  }
-
   .customHeader__avatar {
     display: flex;
     justify-content: center;
