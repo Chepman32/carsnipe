@@ -23,6 +23,10 @@ body {
   font-family: BebasNeue-Regular;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: url(./assets/images/a9bdf515-102c-4bf3-abb4-afca1e533796.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .auctionHub__cardText {

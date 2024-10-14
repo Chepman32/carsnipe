@@ -6,7 +6,7 @@ import './styles.css';
 export const MenuItems = () => {
     const location = useLocation()
   return (
-    <section style={{ display: 'flex', justifyContent: 'flex-start', alignItems: "center" }} className='customHeader__menu'>
+    <section className='customHeader__menu'>
   <Menu.Item 
     key="carsStore" 
     style={{ 

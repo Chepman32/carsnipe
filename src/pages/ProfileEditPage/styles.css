@@ -22,6 +22,9 @@
 }
 
 .avatar-item {
+  width: 5vh;
+  height: 5vh;
+  border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.3s;

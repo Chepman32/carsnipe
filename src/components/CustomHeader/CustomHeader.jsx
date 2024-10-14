@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Menu, Typography, Drawer } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { MenuOutlined } from '@ant-design/icons';
 import './styles.css';
 import plus_symbol from "../../assets/icons/plus_ymbol.png";
+import auction_icon from "../../assets/icons/auctions.png";
+import myCars_symbol from "../../assets/icons/myCars.jpg";
+import carsStore_symbol from "../../assets/icons/cars_store.png";
 import { MenuItems } from './MenuItems';
 
 const { Text } = Typography;
@@ -11,11 +14,24 @@ const { Text } = Typography;
 const CustomHeader = ({ nickname, email, avatar, money }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const location = useLocation()
-  
+  const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
+
+  // Added effect to handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call on mount
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (location.pathname === "/") {
     return null;
@@ -47,10 +63,11 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
             className="burgerMenuButton"
             icon={<MenuOutlined />}
             onClick={toggleDrawer}
-            style={{ display: 'none' }}
+            style={{ display: isMobile ? 'block' : 'none' }}
           />
 
-<MenuItems/>
+          {!isMobile && <MenuItems />}
+
           <section style={{ display: 'flex', alignItems: 'center' }}>
             <Link 
               to="store" 
@@ -59,7 +76,7 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
               onMouseLeave={() => setIsHovered(false)}
               style={{ background: 'transparent', borderLeft: location.pathname === "/store" && '1px solid red', borderRight: location.pathname === "/store" && '1px solid red' }}
             >
-              <img src={plus_symbol} alt="plus_symbol" className="storeIcon" />
+              <img src={plus_symbol} alt="plus_symbol" className="headerIcon" />
               <Text style={{ marginRight: 15 }} type="warning">{`$${money}`}</Text>
             </Link>
             <Link to="/profileEditPage" className="customHeader__avatar" style={{ background: 'transparent', borderLeft: location.pathname === "/profileEditPage" || location.pathname === "/achievements" && '1px solid red', borderRight: location.pathname === "/profileEditPage" && '1px solid red' }} >
@@ -76,31 +93,32 @@ const CustomHeader = ({ nickname, email, avatar, money }) => {
           open={drawerVisible}
           width={"60vw"}
         >
-          <div className="header__drawer">
+          <div className="header__drawer" style={{ display: 'flex', flexDirection: 'column' }}>
             <Link to="/carsStore" className="header__drawer__item" onClick={toggleDrawer}>
+              <img src={carsStore_symbol} alt="carsStore_symbol" className="headerIcon" />
               <Text strong>Cars Store</Text>
             </Link>
             <Link to="/myCars" className="header__drawer__item" onClick={toggleDrawer}>
+              <img src={myCars_symbol} alt="myCars_symbol" className="headerIcon" />
               <Text strong>My Cars</Text>
             </Link>
             <Link to="/auctionsHub" className="header__drawer__item" onClick={toggleDrawer}>
+              <img src={auction_icon} alt="auction_icon" className="headerIcon" />
               <Text strong>Auctions</Text>
             </Link>
             <Link to="store" className="header__drawer__item store" onClick={toggleDrawer}>
-                <img src={plus_symbol} alt="plus_ymbol" className="storeIcon" />
-                <Text strong>{`$${money}`}</Text>
-              </Link>
-              <Link to="/profileEditPage" >
+              <img src={plus_symbol} alt="plus_ymbol" className="headerIcon" />
+              <Text strong>{`$${money}`}</Text>
+            </Link>
+            <Link to="/profileEditPage" onClick={toggleDrawer}>
               <div className="drawer__avatar">
-              <Text
-                className="header__drawer__nickname"
-              >
-                {nickname}
+                <Text className="header__drawer__nickname">
+                  {nickname}
                 </Text>
                 <img src={avatar} alt="avatar" />
               </div>
             </Link>
-         </div>
+          </div>
         </Drawer>
       </Menu>
       <div className="headerPlaceholder"></div>

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Avatar, notification, Typography } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { generateClient } from 'aws-amplify/api';
-import * as mutations from '../../../graphql/mutations';
-import avatar1 from "../../../assets/images/avatars/633acd8e-6641-4ad5-93a7-a2a4a7eedd2a.jpg";
-import avatar2 from "../../../assets/images/avatars/df6a476f-b3ca-42c9-ab86-d3a8f539e7d8.jpg";
-import avatar3 from "../../../assets/images/avatars/images (1).jpeg";
-import avatar4 from "../../../assets/images/avatars/images (2).jpeg";
-import avatar5 from "../../../assets/images/avatars/images (3).jpeg";
-import avatar6 from "../../../assets/images/avatars/images.jpeg";
+import * as mutations from '../../graphql/mutations';
+import avatar1 from "../../assets/images/avatars/633acd8e-6641-4ad5-93a7-a2a4a7eedd2a.jpg";
+import avatar2 from "../../assets/images/avatars/df6a476f-b3ca-42c9-ab86-d3a8f539e7d8.jpg";
+import avatar3 from "../../assets/images/avatars/images (1).jpeg";
+import avatar4 from "../../assets/images/avatars/images (2).jpeg";
+import avatar5 from "../../assets/images/avatars/images (3).jpeg";
+import avatar6 from "../../assets/images/avatars/images.jpeg";
 import "./styles.css";
 import { Link } from 'react-router-dom';
 
@@ -101,12 +101,12 @@ const ProfileEditPage = ({ playerInfo, currentAuthenticatedUser, signOut }) => {
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <div className="avatar-container">
               {avatars.map((avatarName, index) => (
-                <Avatar
+                <img
                   key={index}
-                  size={80}
                   src={avatarMap[avatarName]}
                   className={`avatar-item ${selectedAvatar === avatarName ? 'selected' : ''}`}
                   onClick={() => handleAvatarSelect(avatarName)}
+                  alt={avatarName}
                 />
               ))}
             </div>
