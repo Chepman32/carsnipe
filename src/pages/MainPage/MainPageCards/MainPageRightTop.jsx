@@ -6,7 +6,7 @@ const MainPageRightTop = ({ focused, handleMouseEnter }) => {
   return (
     <Link to="/store" className={`tile ${focused ? 'focused' : ''}`} onMouseEnter={() => handleMouseEnter("rightTop")}>
       <Typography.Text className="mainpage__cardText_black">
-        Store
+        Bank
       </Typography.Text>
     </Link>
   );
