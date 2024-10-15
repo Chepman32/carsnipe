@@ -10,7 +10,6 @@ const getImageSource = (make, model) => {
 };
 
 export default function AuctionPageItem({ playerInfo, auction, isSelected, index, handleItemClick }) {
-    const [userBid, setUserBid] = useState(null); // State to hold user's bid for the auction
 
     return (
         <Col className='auctionPageItem' span={24} style={{ height: '5%', width: '100%', display: 'flex' }} onClick={() => handleItemClick(auction)} >

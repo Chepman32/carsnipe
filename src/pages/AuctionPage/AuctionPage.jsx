@@ -5,6 +5,7 @@ import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../../graphql/queries';
 import { calculateTimeDifference, fetchUserBiddedList, fetchAuctionUser, fetchUserCarsRequest, playOpeningSound, playSwitchSound, playClosingSound } from "../../functions";
+import { isMobile } from 'react-device-detect';
 import AuctionPageItem from "./AuctionPageItem";
 import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
 import AuctionActionsModal from "./AuctionActionsModal";
@@ -252,7 +253,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
     <div className="auctionPage">
       <div style={{ flex: 1 }}>
         <div className="auction-items-container" ref={auctionContainerRef}>
-          {auctions.map((auction) => window.innerWidth > 768 ? (
+          {auctions.map((auction) => !isMobile ? (
             (
               <AuctionPageItem
                 key={auction.id}
@@ -284,7 +285,9 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         )}
         </div>
       </div>
-      <SelectedAuctionDetails selectedAuction={selectedAuction} />
+      {
+        window.innerWidth >= 768 && <SelectedAuctionDetails selectedAuction={selectedAuction} />
+      }
       <AuctionActionsModal
         visible={auctionActionsVisible}
         handleAuctionActionsCancel={() => {

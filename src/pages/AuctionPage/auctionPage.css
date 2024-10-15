@@ -1,7 +1,7 @@
 .auctionPage {
   display: flex;
-  padding: 20px;
-  background: #d6d8a3;
+  padding: 10px;
+  background: url(../../assets/images/soft-background.png);
 }
 .auctionPageItem {
   width: 100px;
@@ -9,6 +9,24 @@
   display: flex;
   margin: 10px 0;
   background: #fff;
+}
+
+.mobileAuctionPageItem {
+  max-width: 98vw;
+  border-bottom: 2px solid #ccc;
+  background: #fff;
+}
+
+.mobileAuctionPageItem__image {
+  height: 40vw;
+  width: 40vw; /* Maintain aspect ratio */
+  max-width: 80%; /* Adjust this value to reduce the image size */
+  object-fit: contain;
+}
+
+.mobileAuctionPageItem .hammer {
+  width: 5vh;
+  height: 5vh;
 }
 .auctionDetails {
   max-height: 85vh;
