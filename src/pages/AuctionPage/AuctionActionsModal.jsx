@@ -4,6 +4,7 @@ import "./auctionPage.css";
 import { fetchAuctionCreator, playSwitchSound } from "../../functions";
 import { useNavigate } from "react-router-dom";
 import AuctionActionsModalRow from "../../components/AuctionActionsModalRow/AuctionActionsModalRow";
+import { isMobile } from "react-device-detect";
 
 const AuctionActionsModal = ({ visible, handleAuctionActionsCancel, selectedAuction, loadingBid, bid, buyCar, loadingBuy }) => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const AuctionActionsModal = ({ visible, handleAuctionActionsCancel, selectedAuct
     <Modal
       centered
       className="carDetailsModal"
-      width={window.innerWidth * 0.5}
+      width={isMobile ? "90%" : "50%"}
       visible={visible}
       title="Car Details"
       onCancel={handleAuctionActionsCancel}

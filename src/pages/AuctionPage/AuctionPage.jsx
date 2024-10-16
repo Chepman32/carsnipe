@@ -11,6 +11,7 @@ import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
 import AuctionActionsModal from "./AuctionActionsModal";
 import AuctionMobilePageItem from "./MobileAuctionPageItem";
 import { CreditWarningModal } from "../../components/CreditWarningModal/CreditWarningModal";
+import { SelectedAuctionDetailsModal } from "./SelectedAuctionDetailsModal";
 
 const client = generateClient();
 
@@ -21,6 +22,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   const [selectedAuction, setSelectedAuction] = useState(null);
   const [auctionActionsVisible, setAuctionActionsVisible] = useState(false);
   const [creditWarningModalvisible, setCreditWarningModalvisible] = useState(false);
+  const [selectedAuctionDetailsModalVisible, setSelectedAuctionDetailsModalVisible] = useState(false);
   const auctionContainerRef = useRef(null);
 
   const handleAuctionActionsShow = () => {
@@ -246,7 +248,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   const handleItemClick = (clickedAuction) => {
     setSelectedAuction(clickedAuction);
     playOpeningSound();
-    handleAuctionActionsShow();
+    isMobile === false ? handleAuctionActionsShow() : setSelectedAuctionDetailsModalVisible(true);
   };
 
   return (
@@ -301,6 +303,9 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         loadingBuy={loadingBuy}
       />
       <CreditWarningModal isModalVisible={creditWarningModalvisible} setIsModalVisible={setCreditWarningModalvisible} />
+      {
+        isMobile ===  true && <SelectedAuctionDetailsModal selectedAuction={selectedAuction} visible={selectedAuctionDetailsModalVisible} clode={() => setSelectedAuctionDetailsModalVisible(false)} />
+      }
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Modal, Spin } from "antd";
 import "./carsPage.css";
 import CarDetailsModalRow from "./CarDetailsModalRow";
 import { playSwitchSound } from "../../functions";
+import { isMobile } from "react-device-detect";
 
 const CarDetailsModal = ({
   visible,
@@ -70,7 +71,7 @@ const CarDetailsModal = ({
     <Modal
       centered
       className="carDetailsModal"
-      width={window.innerWidth * 0.5}
+      width={isMobile ? window.innerWidth * 0.8 : window.innerWidth * 0.5}
       visible={visible}
       title="Car Details"
       onCancel={handleCancel}

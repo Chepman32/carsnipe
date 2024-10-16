@@ -200,3 +200,8 @@
   border-radius: 50%;
   transition: border-color 0.3s;
 }
+
+.selectedAuctionDetailsModal .auctionDetails {
+  width: 90vw !important;
+  background: red;
+}
