@@ -12,7 +12,7 @@ const getImageSource = (make, model) => {
     return require(`../../assets/images/${imageName}`);
   };
 
-export const SelectedAuctionDetailsModal = ({ visible, close, selectedAuction }) => {
+export const SelectedAuctionDetailsModal = ({ visible, close, selectedAuction, handleAuctionActionsShow }) => {
     const [avatar, setAvatar] = React.useState(null);
 
   useEffect(() => {
@@ -28,11 +28,11 @@ export const SelectedAuctionDetailsModal = ({ visible, close, selectedAuction })
       centered
       className="selectedAuctionDetailsModal"
       width={"90%"}
-      visible={visible}
+      open={visible}
       onCancel={close}
       footer={null}
     >
-      <Col className="auctionDetails" span={12} style={{ height: '100%', padding: '20px' }}>
+      <div className="auctionDetails" style={{ height: '100%', padding: '20px' }}>
       {selectedAuction && (
         <Flex direction="column" style={{ height: "100%" }}>
           <Card
@@ -62,13 +62,16 @@ export const SelectedAuctionDetailsModal = ({ visible, close, selectedAuction })
                 </Space>
                 <Typography.Text className="time">
                 {calculateTimeDifference(selectedAuction.endTime)}
-                </Typography.Text>
+                                  </Typography.Text>
+                                  <div className="selectedAuctionDetailsModal__actions" onClick={handleAuctionActionsShow}>
+                                  <h3 style={{textAlign: "right"}}>Purchase ...</h3>
+                                  </div>
               </Space>
             </Flex>
           </Card>
         </Flex>
       )}
-    </Col>
+    </div>
     </Modal>
   );
 };

@@ -288,7 +288,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         </div>
       </div>
       {
-        window.innerWidth >= 768 && <SelectedAuctionDetails selectedAuction={selectedAuction} />
+        !isMobile && <SelectedAuctionDetails selectedAuction={selectedAuction} />
       }
       <AuctionActionsModal
         visible={auctionActionsVisible}
@@ -304,7 +304,12 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
       />
       <CreditWarningModal isModalVisible={creditWarningModalvisible} setIsModalVisible={setCreditWarningModalvisible} />
       {
-        isMobile ===  true && <SelectedAuctionDetailsModal selectedAuction={selectedAuction} visible={selectedAuctionDetailsModalVisible} clode={() => setSelectedAuctionDetailsModalVisible(false)} />
+        isMobile === true && <SelectedAuctionDetailsModal
+          selectedAuction={selectedAuction}
+          visible={selectedAuctionDetailsModalVisible}
+          close={() => setSelectedAuctionDetailsModalVisible(false)}
+          handleAuctionActionsShow={handleAuctionActionsShow}
+        />
       }
     </div>
   );

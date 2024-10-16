@@ -202,6 +202,29 @@
 }
 
 .selectedAuctionDetailsModal .auctionDetails {
-  width: 90vw !important;
-  background: red;
+  width: 100%;
+}
+
+.selectedAuctionDetailsModal .auctionDetails_image {
+  width: 100%;
+height: auto;
+  object-fit: contain;
+}
+
+.selectedAuctionDetailsModal .subText {
+  font-size: 3vh;
+  font-weight: 500;
+}
+
+.selectedAuctionDetailsModal__actions {
+  width: 25vw;
+  padding: 1vw 2vw;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 3vh;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 2vw;
+  -webkit-box-shadow: 0px -10px 13px -5px rgba(34, 60, 80, 0.57) inset;
+-moz-box-shadow: 0px -18px 13px -5px rgba(34, 60, 80, 0.57) inset;
+box-shadow: 0px -18px 13px -5px rgba(34, 60, 80, 0.57) inset;
 }
