@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./store.css";
 import coin_symbol from "../../assets/icons/coin_symbol.png"
 import { Link } from "react-router-dom";
+import SlotMachine from "../../components/SlotMachine/SlotMachine";
 
 const StoreItemCard = ({ item, email, username }) => {
   const [isBouncing, setIsBouncing] = useState(false);
@@ -66,10 +67,13 @@ const Store = ({ email, username }) => {
   ];
 
   return (
-    <div className="store-container">
+    <div>
+      <section className="store-container">
       {items.map((item) => (
           <StoreItemCard key={item.id} item={item} email={email} username={username} />
       ))}
+      </section>
+      <SlotMachine/>
     </div>
   );
 };
