@@ -1,41 +1,28 @@
 import React, { useState, useCallback, useRef } from 'react';
 import './slotMachine.css';
+import { carImages } from '../../constants';
 
-const iconMap = ["seven", "banana", "watermelon", "cherry", "plum", "orange", "bell", "bar", "lemon"];
-const iconHeight = 158; 
-const numIcons = iconMap.length;
-const spinDuration = 3000; 
-const decelerationDuration = 1500;
-const initialSpinSpeed = 50; 
+const imageHeight = window.innerHeight * 0.3333; // One-third of the viewport height
+const numImages = carImages.length;
+const spinDuration = 2000; // Total duration of the spin
+const decelerationDuration = 1000; // Time for deceleration
+const initialSpinSpeed = 50; // Speed when spinning starts
 
-const SlotMachine = () => {
-  const [indexes, setIndexes] = useState([0, 0, 0]);
-  const [rolling, setRolling] = useState(false);
-  const [reelStyles, setReelStyles] = useState([{}, {}, {}]);
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);  // Easing function for smooth stop
+
+const WheelSpin = () => {
+  const [index, setIndex] = useState(0);
+  const [spinning, setSpinning] = useState(false);
+  const [reelStyle, setReelStyle] = useState({});
   const spinStartTime = useRef(0);
-  const animationFrameIds = useRef([]);
+  const animationFrameId = useRef(null);
 
   const getRandomIndex = useCallback(() => {
-    const array = new Uint32Array(1);
-    window.crypto.getRandomValues(array);
-    return array[0] % numIcons;
+    return Math.floor(Math.random() * numImages);
   }, []);
 
-  const shouldMatch = () => {
-    const randomValue = Math.random(); 
-    return randomValue < 0.01; 
-  };
-
-  const getRandomIndexes = () => {
-    const uniqueIndexes = new Set();
-    while (uniqueIndexes.size < 3) {
-      uniqueIndexes.add(getRandomIndex());
-    }
-    return Array.from(uniqueIndexes);
-  };
-
-  const spin = useCallback((reelIndex, finalIndex) => {
-    let position = 0;
+  const spin = useCallback((finalIndex) => {
+    let position = 0;  // Current Y-axis position
     let lastTimestamp = performance.now();
 
     const animate = (timestamp) => {
@@ -43,94 +30,73 @@ const SlotMachine = () => {
       let currentSpinSpeed = initialSpinSpeed;
 
       if (elapsed > spinDuration - decelerationDuration) {
+        // Deceleration Phase
         const decelerationProgress = (elapsed - (spinDuration - decelerationDuration)) / decelerationDuration;
-        currentSpinSpeed = initialSpinSpeed + (1000 - initialSpinSpeed) * decelerationProgress;
+        const easedProgress = easeOutCubic(decelerationProgress);
+        currentSpinSpeed = initialSpinSpeed + (500 - initialSpinSpeed) * easedProgress;
       }
 
       if (elapsed < spinDuration) {
+        // During the spin
         const delta = timestamp - lastTimestamp;
-        position += (delta / currentSpinSpeed) * iconHeight;
-        position %= (numIcons * iconHeight);
-
-        setReelStyles(prev => {
-          const newStyles = [...prev];
-          newStyles[reelIndex] = {
-            ...newStyles[reelIndex],
-            backgroundPositionY: `-${position}px`,
-            transition: 'none', 
-          };
-          return newStyles;
+        position += (delta / currentSpinSpeed) * imageHeight;
+        position %= (numImages * imageHeight);  // Ensure position loops correctly
+        
+        // Update reel position without transition during spin
+        setReelStyle({
+          transform: `translateY(-${position}px)`,
+          transition: 'none',
         });
 
         lastTimestamp = timestamp;
-        animationFrameIds.current[reelIndex] = requestAnimationFrame(animate);
+        animationFrameId.current = requestAnimationFrame(animate);
       } else {
-        setReelStyles(prev => {
-          const newStyles = [...prev];
-          newStyles[reelIndex] = {
-            ...newStyles[reelIndex],
-            backgroundPositionY: `-${finalIndex * iconHeight}px`,
-            transition: 'background-position-y 100ms ease-out', 
-          };
-          return newStyles;
+        // Snap to the final index smoothly
+        const finalPosition = finalIndex * imageHeight;
+        setReelStyle({
+          transform: `translateY(-${finalPosition}px)`,
+          transition: 'transform 500ms ease-out',  // Use a smooth ease-out transition for the last stop
         });
-        setIndexes(prev => {
-          const newIndexes = [...prev];
-          newIndexes[reelIndex] = finalIndex;
-          return newIndexes;
-        });
+        setIndex(finalIndex);
+        setSpinning(false);  // Mark spin as finished
       }
     };
 
-    animationFrameIds.current[reelIndex] = requestAnimationFrame(animate);
-  }, [getRandomIndex]);
+    animationFrameId.current = requestAnimationFrame(animate);
+  }, []);
 
-  const rollAll = useCallback(() => {
-    setRolling(true);
-    spinStartTime.current = performance.now();
-
-    const match = shouldMatch();
-    let finalIndexes;
-
-    if (match) {
-      const matchingIcon = getRandomIndex();
-      finalIndexes = [matchingIcon, matchingIcon, matchingIcon];
-    } else {
-      // Generate a new random index for each reel to ensure randomness
-      finalIndexes = [getRandomIndex(), getRandomIndex(), getRandomIndex()];
+  const handleSpin = useCallback(() => {
+    if (!spinning) {
+      setSpinning(true);
+      spinStartTime.current = performance.now();
+      const finalIndex = getRandomIndex();
+      spin(finalIndex);
     }
-
-    // Spin each reel with its own final index
-    [0, 1, 2].forEach(i => spin(i, finalIndexes[i]));
-
-    setTimeout(() => {
-      animationFrameIds.current.forEach(id => cancelAnimationFrame(id));
-      setRolling(false);
-    }, spinDuration);
-  }, [spin, getRandomIndex]);
-
-  const handleReSpin = () => {
-    if (!rolling) {
-      rollAll();
-    }
-  };
+  }, [spinning, getRandomIndex, spin]);
 
   return (
-    <div className="slot-machine">
-      <div className="slots">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="reel"
-            style={reelStyles[i]}
-          />
-        ))}
+    <div className="wheel-spin-container">
+      <div className="wheel-spin-window">
+        <div className="wheel-spin-reel" style={reelStyle}>
+          {[...carImages, ...carImages].map((src, i) => (
+            <img 
+              key={i} 
+              src={src} 
+              alt={`Car ${i % numImages + 1}`}
+              className="wheel-spin-image"
+            />
+          ))}
+        </div>
       </div>
-      <button className="re-spin-button" onClick={handleReSpin} disabled={rolling}>
-        {rolling ? 'Rolling...' : 'Re-Spin'}
+      <button
+        onClick={handleSpin}
+        disabled={spinning}
+        className="wheel-spin-button"
+      >
+        {spinning ? 'Spinning...' : 'PLAY'}
       </button>
     </div>
   );
 };
 
-export default SlotMachine;
+export default WheelSpin;

@@ -1,56 +1,63 @@
-.slot-machine {
+.wheel-spin-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
 
-.slots {
-    position: relative;
-    width: 474px; /* 3 * 158px */
-    height: 474px; /* 3 * 158px */
-    display: flex;
-    justify-content: space-between;
-    padding: 48px; /* Increase padding */
-    background: linear-gradient(45deg, grey 0%, lightgray 100%);
-    border-top: 2px solid rgba(255, 255, 255, 0.6);
-    border-right: 2px solid rgba(255, 255, 255, 0.6);
-    border-left: 2px solid rgba(0, 0, 0, 0.4);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.4);
-    box-shadow: -4px 4px 6px rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-}
-
-.reel {
-    position: relative;
-    width: 158px; /* Double the width */
-    height: 474px; /* Adjust height */
-    border: 2px solid rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+  .wheel-spin-container * {
+    background: transparent;
+  }
+  
+  .wheel-spin-window {
+    width: 35vh;
+    height: 35vh; /* One-third of the viewport height */
     overflow: hidden;
-    background-image: url('https://assets.codepen.io/439000/slotreel.webp');
-    background-position: 0 0;
-    background-repeat: repeat-y;
-    transition: background-position-y 0.5s ease;
-}
+    margin-bottom: 1rem;
+    position: relative; /* Added to create a stacking context */
+  }
+  
+  .wheel-spin-reel {
+    display: flex;
+    flex-direction: column;
+    position: absolute; /* Added to ensure precise positioning */
+    top: 25vh;
+    left: 0;
+  }
+  
+  .wheel-spin-image {
+    width: 35vh;
+    height: 35vh; /* Match the window height */
+    object-fit: contain;
+    margin-bottom: 10vh;
+    display: block; /* Remove any potential inline spacing */
+    border: 1px solid black;
 
-.re-spin-button {
-    margin-top: 30px;
-    padding: 20px 40px; /* Bigger button */
-    font-size: 1.8rem; /* Larger text */
-    background-color: #f04;
+  }
+  
+  .wheel-spin-button {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0.375rem;
+    font-weight: bold;
     cursor: pointer;
-}
-
-.re-spin-button:disabled {
-    background-color: grey;
+    transition: background-color 0.2s;
+  }
+  
+  .wheel-spin-button:hover {
+    background-color: #2563eb;
+  }
+  
+  .wheel-spin-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  }
+  
+  .wheel-spin-button:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
-}
-
-p {
-    text-align: center;
-    font-size: 1.6rem; /* Increased font size */
-    color: #444;
-}
+  }

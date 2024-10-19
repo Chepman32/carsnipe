@@ -69,9 +69,6 @@ const Store = ({ email, username }) => {
   return (
     <div>
       <section className="store-container">
-      {items.map((item) => (
-          <StoreItemCard key={item.id} item={item} email={email} username={username} />
-      ))}
       </section>
       <SlotMachine/>
     </div>
