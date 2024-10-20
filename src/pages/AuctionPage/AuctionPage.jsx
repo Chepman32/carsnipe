@@ -4,7 +4,16 @@ import { Form, Select, message } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../../graphql/queries';
-import { calculateTimeDifference, fetchUserBiddedList, fetchAuctionUser, fetchUserCarsRequest, playOpeningSound, playSwitchSound, playClosingSound } from "../../functions";
+import {
+  calculateTimeDifference,
+  fetchUserBiddedList,
+  fetchAuctionUser,
+  fetchUserCarsRequest,
+  playOpeningSound,
+  playSwitchSound,
+  playClosingSound,
+  fetchUserAchievementsList
+} from "../../functions";
 import { isMobile } from 'react-device-detect';
 import AuctionPageItem from "./AuctionPageItem";
 import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
@@ -32,7 +41,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   const handleAuctionActionsCancel = () => {
     setAuctionActionsVisible(false);
   };
-  
+
   const listAuctions = useCallback(async (previousIndex = null) => {
     try {
       const auctionData = await client.graphql({ query: listAuctionsQuery });
@@ -61,64 +70,96 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
     } catch (error) {
       console.error("Error fetching auctions:", error);
     }
-  }, []);
+  }, [playerInfo.nickname]);
+
+
+  const checkAndUpdateAchievements = async () => {
+    try {
+      const userAchievements = await fetchUserAchievementsList(playerInfo.id);
+
+      if (!userAchievements.some(achievement => achievement.name === "First One")) {
+        const newAchievement = { name: "First One", date: new Date().toISOString() };
+        const updatedAchievements = [...userAchievements, newAchievement];
+
+        await client.graphql({
+          query: mutations.updateUser,
+          variables: {
+            input: {
+              id: playerInfo.id,
+              achievements: updatedAchievements,
+            },
+          },
+        });
+
+        message.success("Achievement unlocked: First one");
+      }
+    } catch (error) {
+      console.error("Error checking and updating achievements:", error);
+    }
+  };
 
   const increaseBid = async (auction) => {
     try {
-      if(money < auction.buy) {
+      if (money < auction.buy) {
         setCreditWarningModalvisible(true);
         return;
-      }
-      else {
+      } else {
         setLoadingBid(true);
-      const userBidded = await fetchUserBiddedList(playerInfo.id);
-      let increasedBidValue = Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
 
-      if (increasedBidValue >= auction.buy) {
-        buyItem();
-        return;
-      }
+        const userBidded = await fetchUserBiddedList(playerInfo.id);
 
-      const newMoney = auction.lastBidPlayer === playerInfo.nickname ? money - (increasedBidValue - auction.currentBid) : money - increasedBidValue;
-      setMoney(newMoney);
+        let increasedBidValue = Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
 
-      const bidObject = {
-        auctionId: auction.id,
-        bidValue: increasedBidValue,
-      };
+        if (increasedBidValue >= auction.buy) {
+          await buyItem();
+          return;
+        }
 
-      const updatedBiddedList = [...userBidded, bidObject];
-      const bidInputs = updatedBiddedList.map(({ auctionId, bidValue }) => ({ auctionId, bidValue }));
+        const newMoney = auction.lastBidPlayer === playerInfo.nickname
+          ? money - (increasedBidValue - auction.currentBid)
+          : money - increasedBidValue;
+        setMoney(newMoney);
 
-      const updatedUser = {
-        id: playerInfo.id,
-        money: newMoney,
-        bidded: bidInputs,
-      };
+        const bidObject = {
+          auctionId: auction.id,
+          bidValue: increasedBidValue,
+        };
 
-      await client.graphql({
-        query: mutations.updateUser,
-        variables: {
-          input: updatedUser,
-        },
-      });
+        const updatedBiddedList = [...userBidded, bidObject];
+        const bidInputs = updatedBiddedList.map(({ auctionId, bidValue }) => ({ auctionId, bidValue }));
 
-      const updatedAuction = {
-        id: auction.id,
-        currentBid: increasedBidValue,
-        lastBidPlayer: playerInfo.nickname,
-        status: increasedBidValue < auction.buy ? "active" : "finished",
-      };
+        const updatedUser = {
+          id: playerInfo.id,
+          money: newMoney,
+          bidded: bidInputs,
+        };
 
-      await client.graphql({
-        query: mutations.updateAuction,
-        variables: { input: updatedAuction },
-      });
+        if (userBidded.length === 0) {
+          await checkAndUpdateAchievements();
+        }
 
-      message.success('Bid successfully increased!');
+        await client.graphql({
+          query: mutations.updateUser,
+          variables: {
+            input: updatedUser,
+          },
+        });
 
-      const currentIndex = auctions.indexOf(auction);
-      listAuctions(currentIndex);
+        const updatedAuction = {
+          id: auction.id,
+          currentBid: increasedBidValue,
+          lastBidPlayer: playerInfo.nickname,
+          status: increasedBidValue < auction.buy ? "Active" : "Finished",
+        };
+
+        await client.graphql({
+          query: mutations.updateAuction,
+          variables: { input: updatedAuction },
+        });
+
+        message.success('Bid successfully increased!');
+        const currentIndex = auctions.indexOf(auction);
+        await listAuctions(currentIndex);
       }
     } catch (error) {
       console.error(error);
@@ -127,78 +168,124 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
       setAuctionActionsVisible(false);
     }
   };
-  
+
+
   const buyItem = async () => {
     try {
-      if (money < selectedAuction.buy) {
-        setCreditWarningModalvisible(true);
-        return;
-      }
-      else if (money >= selectedAuction.buy) {
-        setLoadingBuy(true);
-      
-      const userBiddedList = await fetchUserBiddedList(playerInfo.id);
-      const userBidOnThisAuction = userBiddedList.find(bid => bid.auctionId === selectedAuction.id);
-      
-      const bidValue = userBidOnThisAuction ? userBidOnThisAuction.bidValue : 0;
-      const moneyToSubtract = selectedAuction.buy - bidValue;
-      
-      const newMoney = money - moneyToSubtract;
-      setMoney(newMoney);
-  
-      const auctionUser = await fetchAuctionUser(selectedAuction.id);
-      await client.graphql({
-        query: mutations.updateUser,
-        variables: {
-          input: {
-            id: auctionUser.id,
-            money: auctionUser.money + selectedAuction.buy,
-          },
-        },
-      });
-  
-      await client.graphql({
-        query: mutations.createUserCar,
-        variables: {
-          input: {
-            userId: playerInfo.id,
-            carId: selectedAuction.carId,
-          },
-        },
-      });
-  
-      await client.graphql({
-        query: mutations.updateUser,
-        variables: {
-          input: {
-            id: playerInfo.id,
-            money: newMoney,
-          },
-        },
-      });
-  
-      const updatedAuctionInput = {
-        id: selectedAuction.id,
-        currentBid: selectedAuction.buy,
-        lastBidPlayer: playerInfo.nickname,
-        status: "Finished",
-      };
-      await client.graphql({
-        query: mutations.updateAuction,
-        variables: { input: updatedAuctionInput },
-      });
-  
-      message.success('Car successfully bought!');
-  
-      listAuctions();
-      }
+        if (money < selectedAuction.buy) {
+            setCreditWarningModalvisible(true);
+            return;
+        } else if (money >= selectedAuction.buy) {
+            setLoadingBuy(true);
+
+            const userBiddedList = await fetchUserBiddedList(playerInfo.id);
+            const userBidOnThisAuction = userBiddedList.find(bid => bid.auctionId === selectedAuction.id);
+
+            const bidValue = userBidOnThisAuction ? userBidOnThisAuction.bidValue : 0;
+            const moneyToSubtract = selectedAuction.buy - bidValue;
+
+            const newMoney = money - moneyToSubtract;
+            setMoney(newMoney);
+
+            const auctionUser = await fetchAuctionUser(selectedAuction.id);
+            await client.graphql({
+                query: mutations.updateUser,
+                variables: {
+                    input: {
+                        id: auctionUser.id,
+                        money: auctionUser.money + selectedAuction.buy,
+                    },
+                },
+            });
+
+            await client.graphql({
+                query: mutations.createUserCar,
+                variables: {
+                    input: {
+                        userId: playerInfo.id,
+                        carId: selectedAuction.carId,
+                    },
+                },
+            });
+
+            await client.graphql({
+                query: mutations.updateUser,
+                variables: {
+                    input: {
+                        id: playerInfo.id,
+                        money: newMoney,
+                    },
+                },
+            });
+
+            const updatedAuctionInput = {
+                id: selectedAuction.id,
+                currentBid: selectedAuction.buy,
+                lastBidPlayer: playerInfo.nickname,
+                status: "Finished",
+            };
+            await client.graphql({
+                query: mutations.updateAuction,
+                variables: { input: updatedAuctionInput },
+            });
+
+            message.success('Car successfully bought!');
+
+            await checkAndUpdateAchievements();
+
+            // Check if the user has acquired 5 cars and award "Starter Pack" achievement
+            const userCars = await fetchUserCarsRequest(playerInfo.id);
+            const userAchievements = await fetchUserAchievementsList(playerInfo.id);
+
+            if (userCars.length >= 3 && !userAchievements.some(achievement => achievement.name === "Starter Pack")) {
+                const newAchievement = { name: "Starter Pack", date: new Date().toISOString() };
+                const updatedAchievements = [...userAchievements, newAchievement];
+
+                await client.graphql({
+                    query: mutations.updateUser,
+                    variables: {
+                        input: {
+                            id: playerInfo.id,
+                            achievements: updatedAchievements.map(achievement => ({
+                                name: achievement.name,
+                                date: achievement.date
+                            })),
+                        },
+                    },
+                });
+
+                message.success("Achievement unlocked: Starter Pack");
+            }
+          
+            if (!userAchievements.some(achievement => achievement.name === "First Win")) {
+              const newAchievement = { name: "First Win", date: new Date().toISOString() };
+              const updatedAchievements = [...userAchievements, newAchievement];
+
+              await client.graphql({
+                  query: mutations.updateUser,
+                  variables: {
+                      input: {
+                          id: playerInfo.id,
+                          achievements: updatedAchievements.map(achievement => ({
+                              name: achievement.name,
+                              date: achievement.date
+                          })),
+                      },
+                  },
+              });
+
+              message.success("Achievement unlocked: First Win");
+          }
+
+            await listAuctions();
+        }
     } catch (error) {
-      console.error(error);
+        console.error(error);
     } finally {
-      setLoadingBuy(false);
-      setAuctionActionsVisible(false);
+        setLoadingBuy(false);
+        setAuctionActionsVisible(false);
     }
-  };
+};
 
   useEffect(() => {
     listAuctions();
@@ -219,7 +306,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
               newIndex = currentIndex < auctions.length - 1 ? currentIndex + 1 : 0;
             }
             const newAuction = auctions[newIndex];
-            
+
             if (auctionContainerRef.current) {
               const auctionElement = auctionContainerRef.current.children[newIndex];
               if (auctionElement) {
@@ -229,7 +316,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
                 });
               }
             }
-            
+
             return newAuction;
           });
         } else if (e.key === "Enter") {
@@ -238,13 +325,13 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         }
       }
     };
-  
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [auctions, auctionActionsVisible]);
-  
+
   const handleItemClick = (clickedAuction) => {
     setSelectedAuction(clickedAuction);
     playOpeningSound();
@@ -255,8 +342,8 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
     <div className="auctionPage">
       <div style={{ flex: 1 }}>
         <div className="auction-items-container" ref={auctionContainerRef}>
-          {auctions.map((auction) => !isMobile ? (
-            (
+          {auctions.map((auction) =>
+            !isMobile ? (
               <AuctionPageItem
                 key={auction.id}
                 setSelectedAuction={setSelectedAuction}
@@ -268,11 +355,8 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
                 handleItemClick={handleItemClick}
                 playerInfo={playerInfo}
               />
-            )
-          )
-            : (
-              (
-                <AuctionMobilePageItem
+            ) : (
+              <AuctionMobilePageItem
                 key={auction.id}
                 setSelectedAuction={setSelectedAuction}
                 auction={auction}
@@ -282,19 +366,16 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
                 handleAuctionActionsShow={handleAuctionActionsShow}
                 handleItemClick={handleItemClick}
               />
-              )
-        )
-        )}
+            )
+          )}
         </div>
       </div>
-      {
-        !isMobile && <SelectedAuctionDetails selectedAuction={selectedAuction} />
-      }
+      {!isMobile && <SelectedAuctionDetails selectedAuction={selectedAuction} />}
       <AuctionActionsModal
         visible={auctionActionsVisible}
         handleAuctionActionsCancel={() => {
-          playClosingSound()
-          handleAuctionActionsCancel()
+          playClosingSound();
+          handleAuctionActionsCancel();
         }}
         selectedAuction={selectedAuction}
         bid={increaseBid}
@@ -302,15 +383,18 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         buyCar={buyItem}
         loadingBuy={loadingBuy}
       />
-      <CreditWarningModal isModalVisible={creditWarningModalvisible} setIsModalVisible={setCreditWarningModalvisible} />
-      {
-        isMobile === true && <SelectedAuctionDetailsModal
+      <CreditWarningModal
+        isModalVisible={creditWarningModalvisible}
+        setIsModalVisible={setCreditWarningModalvisible}
+      />
+      {isMobile === true && (
+        <SelectedAuctionDetailsModal
           selectedAuction={selectedAuction}
           visible={selectedAuctionDetailsModalVisible}
           close={() => setSelectedAuctionDetailsModalVisible(false)}
           handleAuctionActionsShow={handleAuctionActionsShow}
         />
-      }
+      )}
     </div>
   );
 }

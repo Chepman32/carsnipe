@@ -6,35 +6,33 @@
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   }
-
+  
   .wheel-spin-container * {
     background: transparent;
   }
   
   .wheel-spin-window {
     width: 35vh;
-    height: 35vh; /* One-third of the viewport height */
+    height: 25vh;
     overflow: hidden;
     margin-bottom: 1rem;
-    position: relative; /* Added to create a stacking context */
+    position: relative;
   }
   
   .wheel-spin-reel {
     display: flex;
     flex-direction: column;
-    position: absolute; /* Added to ensure precise positioning */
-    top: 25vh;
+    position: absolute;
+    top: 0;
     left: 0;
   }
   
   .wheel-spin-image {
     width: 35vh;
-    height: 35vh; /* Match the window height */
+    height: 35vh;
     object-fit: contain;
-    margin-bottom: 10vh;
-    display: block; /* Remove any potential inline spacing */
+    display: block;
     border: 1px solid black;
-
   }
   
   .wheel-spin-button {
@@ -60,4 +58,10 @@
   .wheel-spin-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .slotItem__image {
+    width: 25vw;
+    height: 25vw;
+    object-fit: contain;
   }

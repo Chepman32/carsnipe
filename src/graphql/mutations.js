@@ -26,6 +26,11 @@ export const createUser = /* GraphQL */ `
       }
       avatar
       bio
+      achievements {
+        name
+        date
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -57,6 +62,11 @@ export const updateUser = /* GraphQL */ `
       }
       avatar
       bio
+      achievements {
+        name
+        date
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -88,6 +98,11 @@ export const deleteUser = /* GraphQL */ `
       }
       avatar
       bio
+      achievements {
+        name
+        date
+        __typename
+      }
       createdAt
       updatedAt
       __typename

@@ -23,6 +23,11 @@ export const getUser = /* GraphQL */ `
       }
       avatar
       bio
+      achievements {
+        name
+        date
+        __typename
+      }
       createdAt
       updatedAt
       __typename

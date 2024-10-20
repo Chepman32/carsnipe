@@ -37,10 +37,10 @@ export default function App() {
 
   const createNewPlayer = useCallback(async (username) => {
     if (!email) return;
-    
+  
     try {
       setCreatingUser(true);
-      
+  
       const existingUsers = await client.graphql({
         query: listUsers,
         variables: {
@@ -49,14 +49,14 @@ export default function App() {
           }
         }
       });
-
+  
       if (existingUsers?.data?.listUsers?.items?.length > 0) {
         const existingUser = existingUsers.data.listUsers.items[0];
         setPlayerInfo(existingUser);
         setMoney(existingUser.money);
         return;
       }
-
+  
       const newUserData = {
         nickname: extractNameFromEmail(username) || username,
         email,
@@ -64,17 +64,20 @@ export default function App() {
         bidded: [],
         avatar: "avatar1",
         bio: "",
+        achievements: [
+          { name: "First Auction", date: "10-07-2024" },
+          { name: "First Car Bought", date: "10-09-2024" }
+        ]
       };
-
+  
       const createdPlayer = await client.graphql({
         query: createUser,
         variables: { input: newUserData }
       });
-
+  
       if (createdPlayer?.data?.createUser) {
         setPlayerInfo(createdPlayer.data.createUser);
         setMoney(createdPlayer.data.createUser.money);
-        console.log("Created new player:", createdPlayer.data.createUser);
       }
     } catch (error) {
       console.error("Error creating new player:", error);
@@ -87,7 +90,6 @@ export default function App() {
   const currentAuthenticatedUser = useCallback(async () => {
     try {
       const { signInDetails } = await getCurrentUser();
-      console.log("username", signInDetails.loginId);
       setEmail(signInDetails?.loginId);
       
       const playersData = await client.graphql({
@@ -103,7 +105,6 @@ export default function App() {
         await createNewPlayer(signInDetails?.loginId);
       } else {
         setPlayerInfo(user);
-        console.log("user:", user);
         setMoney(user?.money);
         setLoading(false);
       }
@@ -230,7 +231,7 @@ export default function App() {
                   />
                   <Route
                     path="/achievements"
-                    element={<AchievementList playerInfo={playerInfo} />}
+                    element={<AchievementList userId={playerInfo.id} />}
                   />
                   <Route 
                     path="/paymentError" 

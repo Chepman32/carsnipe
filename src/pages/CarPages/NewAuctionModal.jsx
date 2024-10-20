@@ -9,7 +9,7 @@ export default function NewAuctionModal({ visible, handleCancel, handleOk, selec
   useEffect(() => {
     setMinBid(selectedCar.price / 20)
     setAuctionDuration(1)
-  }, [selectedCar.price, setMinBid]);
+  }, [selectedCar.price, setAuctionDuration, setMinBid]);
 
   return (
     <Modal

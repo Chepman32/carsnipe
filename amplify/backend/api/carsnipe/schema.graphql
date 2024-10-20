@@ -8,6 +8,12 @@ type User @model @auth(rules: [{allow: public}]) {
   bidded: [BidInfo]
   avatar: String
   bio: String
+  achievements: [Achievement]
+}
+
+type Achievement {
+  name: String!
+  date: String!
 }
 
 type Auction @model @auth(rules: [{allow: public, operations: [read, create, update]}]) {
@@ -41,4 +47,3 @@ type Car @model @auth(rules: [{allow: public}]) {
   type: String
   users: [User] @manyToMany(relationName: "UserCar")
 }
- 

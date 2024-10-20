@@ -1,8 +1,11 @@
 import React, { useState, useCallback, useRef } from 'react';
 import './slotMachine.css';
 import { carImages } from '../../constants';
+import SlotItem from './SlotItem';
 
-const imageHeight = window.innerHeight * 0.3333; // One-third of the viewport height
+const slotItems = carImages.map((car, index) => <SlotItem key={index} {...car} />);
+
+const imageHeight = Math.round(window.innerHeight * 0.3333);  // Ensure the height is an exact integer
 const numImages = carImages.length;
 const spinDuration = 2000; // Total duration of the spin
 const decelerationDuration = 1000; // Time for deceleration
@@ -25,6 +28,8 @@ const WheelSpin = () => {
     let position = 0;  // Current Y-axis position
     let lastTimestamp = performance.now();
 
+    console.log('Spinning started! Final Index:', finalIndex);  // Log when the spin starts
+
     const animate = (timestamp) => {
       const elapsed = timestamp - spinStartTime.current;
       let currentSpinSpeed = initialSpinSpeed;
@@ -41,7 +46,7 @@ const WheelSpin = () => {
         const delta = timestamp - lastTimestamp;
         position += (delta / currentSpinSpeed) * imageHeight;
         position %= (numImages * imageHeight);  // Ensure position loops correctly
-        
+
         // Update reel position without transition during spin
         setReelStyle({
           transform: `translateY(-${position}px)`,
@@ -51,19 +56,38 @@ const WheelSpin = () => {
         lastTimestamp = timestamp;
         animationFrameId.current = requestAnimationFrame(animate);
       } else {
-        // Snap to the final index smoothly
-        const finalPosition = finalIndex * imageHeight;
+        // Snap to the final index precisely
+        let finalPosition = finalIndex * imageHeight;
+
+        // Apply rounding to avoid sub-pixel issues
+        finalPosition = Math.round(finalPosition);
+
+        // Log the final position right before snapping
+        console.log(`Final Position before snapping: ${finalPosition}px`);
+        console.log('Image Height:', imageHeight, ' Final Index:', finalIndex);
+
+        // Log reel's current style before the transition
+        console.log('Reel style before final snap:', reelStyle.transform);
+
+        // Set the reel style with final transition
         setReelStyle({
           transform: `translateY(-${finalPosition}px)`,
-          transition: 'transform 500ms ease-out',  // Use a smooth ease-out transition for the last stop
+          transition: 'transform 500ms ease-out',  // Smooth ease-out transition for the last stop
         });
+
+        // Log after the spin finishes and ensure final position is applied correctly
+        setTimeout(() => {
+          console.log('Spin finished. Final Position should be:', finalPosition);
+          console.log('Reel style after snap:', reelStyle.transform);  // Log final position after the snap
+        }, 500);
+
         setIndex(finalIndex);
         setSpinning(false);  // Mark spin as finished
       }
     };
 
     animationFrameId.current = requestAnimationFrame(animate);
-  }, []);
+}, [reelStyle.transform]);
 
   const handleSpin = useCallback(() => {
     if (!spinning) {
@@ -73,19 +97,13 @@ const WheelSpin = () => {
       spin(finalIndex);
     }
   }, [spinning, getRandomIndex, spin]);
+    
 
   return (
     <div className="wheel-spin-container">
       <div className="wheel-spin-window">
         <div className="wheel-spin-reel" style={reelStyle}>
-          {[...carImages, ...carImages].map((src, i) => (
-            <img 
-              key={i} 
-              src={src} 
-              alt={`Car ${i % numImages + 1}`}
-              className="wheel-spin-image"
-            />
-          ))}
+          {[...slotItems, ...slotItems]}
         </div>
       </div>
       <button

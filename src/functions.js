@@ -292,6 +292,23 @@ export const fetchUserBiddedList = async (userId) => {
   }
 };
 
+export const fetchUserAchievementsList = async (userId) => {
+  try {
+    const userData = await client.graphql({
+      query: queries.getUser,
+      variables: {
+        id: userId,
+      },
+    });
+
+    // Ensure we return the correct field containing the achievements
+    return userData.data.getUser.achievements || []; // Return an empty array if no achievements
+  } catch (error) {
+    console.error("Error fetching user achievements:", error);
+    return []; // Return an empty array on error to avoid breaking the code
+  }
+};
+
 export const getCarPriceByIdFromUserCar = async (userId, carId) => {
   try {
     const userData = await client.graphql({
@@ -371,3 +388,8 @@ export const selectAvatar = (avatar) => {
 export function extractNameFromEmail(email) {
   return email.split('@')[0];
 }
+
+export const getImageSource = (make, model) => {
+  const imageName = `${make} ${model}.png`;
+  return require(`./assets/images/${imageName}`);
+};
