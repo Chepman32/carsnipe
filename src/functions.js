@@ -380,6 +380,8 @@ export const selectAvatar = (avatar) => {
       return avatar4;
     case "avatar5":
       return avatar5;
+    case "avatar6":
+      return avatar6
     default:
       return avatar1;
   }
@@ -392,4 +394,59 @@ export function extractNameFromEmail(email) {
 export const getImageSource = (make, model) => {
   const imageName = `${make} ${model}.png`;
   return require(`./assets/images/${imageName}`);
+};
+
+export const fetchUserConversations = async (userId) => {
+  try {
+    const userConversationsData = await client.graphql({
+      query: `
+        query GetUserConversations($userId: ID!) {
+          getUser(id: $userId) {
+            conversations {
+              items {
+                conversation {
+                  id
+                  lastMessageTimestamp
+                  participants {
+                    items {
+                      user {
+                        id
+                        nickname
+                        avatar
+                      }
+                    }
+                  }
+                  messages(limit: 1, sortDirection: DESC) {
+                    items {
+                      content
+                      timestamp
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        userId: userId,
+      },
+    });
+
+    const conversations = userConversationsData.data.getUser.conversations.items.map(item => ({
+      id: item.conversation.id,
+      lastMessageTimestamp: item.conversation.lastMessageTimestamp,
+      participants: item.conversation.participants.items.map(p => ({
+        id: p.user.id,
+        nickname: p.user.nickname,
+        avatar: p.user.avatar,
+      })),
+      lastMessage: item.conversation.messages.items[0] || null,
+    }));
+
+    return conversations;
+  } catch (error) {
+    console.error("Error fetching user's conversations:", error);
+    throw error;
+  }
 };
