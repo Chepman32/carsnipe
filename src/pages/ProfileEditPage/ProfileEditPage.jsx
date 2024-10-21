@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Avatar, notification, Typography } from 'antd';
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MessageOutlined } from '@ant-design/icons';
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
 import avatar1 from "../../assets/images/avatars/633acd8e-6641-4ad5-93a7-a2a4a7eedd2a.jpg";
@@ -139,6 +139,15 @@ const ProfileEditPage = ({ playerInfo, currentAuthenticatedUser, signOut }) => {
               </Button>
             </Form.Item>
           </Form>
+          <Link to="/conversations">
+            <Button 
+              icon={<MessageOutlined />}
+              block
+              className="conversations-button"
+            >
+              My Conversations
+            </Button>
+          </Link>
           <Button 
             danger
             icon={<LogoutOutlined />}

@@ -316,9 +316,9 @@ export const createMessage = /* GraphQL */ `
         updatedAt
         __typename
       }
+      conversationMessagesId
       createdAt
       updatedAt
-      conversationMessagesId
       __typename
     }
   }
@@ -341,9 +341,9 @@ export const updateMessage = /* GraphQL */ `
         updatedAt
         __typename
       }
+      conversationMessagesId
       createdAt
       updatedAt
-      conversationMessagesId
       __typename
     }
   }
@@ -366,9 +366,9 @@ export const deleteMessage = /* GraphQL */ `
         updatedAt
         __typename
       }
+      conversationMessagesId
       createdAt
       updatedAt
-      conversationMessagesId
       __typename
     }
   }

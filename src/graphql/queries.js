@@ -182,9 +182,9 @@ export const getMessage = /* GraphQL */ `
         updatedAt
         __typename
       }
+      conversationMessagesId
       createdAt
       updatedAt
-      conversationMessagesId
       __typename
     }
   }
@@ -202,9 +202,9 @@ export const listMessages = /* GraphQL */ `
         senderId
         receiverId
         timestamp
+        conversationMessagesId
         createdAt
         updatedAt
-        conversationMessagesId
         __typename
       }
       nextToken
@@ -233,9 +233,9 @@ export const messagesBySenderId = /* GraphQL */ `
         senderId
         receiverId
         timestamp
+        conversationMessagesId
         createdAt
         updatedAt
-        conversationMessagesId
         __typename
       }
       nextToken
@@ -264,9 +264,40 @@ export const messagesByReceiverId = /* GraphQL */ `
         senderId
         receiverId
         timestamp
+        conversationMessagesId
         createdAt
         updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const messagesByConversationMessagesId = /* GraphQL */ `
+  query MessagesByConversationMessagesId(
+    $conversationMessagesId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelMessageFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    messagesByConversationMessagesId(
+      conversationMessagesId: $conversationMessagesId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        content
+        senderId
+        receiverId
+        timestamp
         conversationMessagesId
+        createdAt
+        updatedAt
         __typename
       }
       nextToken
@@ -302,13 +333,26 @@ export const listConversations = /* GraphQL */ `
     listConversations(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        lastMessageTimestamp
+        lastMessageAt
+        participants {
+          items {
+            user {
+              id
+              nickname
+              avatar
+            }
+          }
+        }
+        messages(limit: 1, sortDirection: DESC) {
+          items {
+            content
+            createdAt
+          }
+        }
         createdAt
         updatedAt
-        __typename
       }
       nextToken
-      __typename
     }
   }
 `;
@@ -649,3 +693,4 @@ export const userConversationsByConversationId = /* GraphQL */ `
     }
   }
 `;
+

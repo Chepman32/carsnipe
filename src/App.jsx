@@ -24,6 +24,7 @@ import { extractNameFromEmail, selectAvatar } from "./functions";
 import AchievementList from "./pages/AchievementList/AchievementList";
 import { MainPage } from "./pages/MainPage/MainPage";
 import { ConversationPage } from "./pages/ConversationPage/ConversationPage";
+import UserPage from "./pages/UserPage/UserPage"; // Add this import
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -68,8 +69,7 @@ export default function App() {
         achievements: [
           { name: "First Auction", date: "10-07-2024" },
           { name: "First Car Bought", date: "10-09-2024" }
-        ],
-        conversations: { items: [] } // Add this line to initialize conversations as an empty array
+        ]
       };
   
       const createdPlayer = await client.graphql({
@@ -246,6 +246,14 @@ export default function App() {
                   <Route
                     path="/conversations"
                     element={<ConversationPage userId={playerInfo.id} />}
+                  />
+                  <Route
+                    path="/conversations/:recipientId"
+                    element={<ConversationPage userId={playerInfo.id} />}
+                  />
+                  <Route
+                    path="/userPage/:id"
+                    element={<UserPage currentUserId={playerInfo.id} />}
                   />
                 </Routes>
               </main>

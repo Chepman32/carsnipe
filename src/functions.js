@@ -10,6 +10,7 @@ import avatar3 from "./assets/images/avatars/images (1).jpeg"
 import avatar4 from "./assets/images/avatars/images (2).jpeg"
 import avatar5 from "./assets/images/avatars/images (3).jpeg"
 import avatar6 from "./assets/images/avatars/images.jpeg"
+import { deleteConversation } from './graphql/mutations';
 
 const client = generateClient();
 
@@ -399,49 +400,25 @@ export const getImageSource = (make, model) => {
 export const fetchUserConversations = async (userId) => {
   try {
     const userConversationsData = await client.graphql({
-      query: `
-        query GetUserConversations($userId: ID!) {
-          getUser(id: $userId) {
-            conversations {
-              items {
-                conversation {
-                  id
-                  lastMessageTimestamp
-                  participants {
-                    items {
-                      user {
-                        id
-                        nickname
-                        avatar
-                      }
-                    }
-                  }
-                  messages(limit: 1, sortDirection: DESC) {
-                    items {
-                      content
-                      timestamp
-                    }
-                  }
-                }
-              }
-            }
+      query: queries.listConversations,
+      variables: {
+        filter: {
+          participants: {
+            contains: userId
           }
         }
-      `,
-      variables: {
-        userId: userId,
-      },
+      }
     });
 
-    const conversations = userConversationsData.data.getUser.conversations.items.map(item => ({
-      id: item.conversation.id,
-      lastMessageTimestamp: item.conversation.lastMessageTimestamp,
-      participants: item.conversation.participants.items.map(p => ({
+    const conversations = userConversationsData.data.listConversations.items.map(item => ({
+      id: item.id,
+      lastMessageAt: item.lastMessageAt,
+      participants: item.participants.items.map(p => ({
         id: p.user.id,
         nickname: p.user.nickname,
         avatar: p.user.avatar,
       })),
-      lastMessage: item.conversation.messages.items[0] || null,
+      messages: item.messages.items,
     }));
 
     return conversations;
@@ -450,3 +427,84 @@ export const fetchUserConversations = async (userId) => {
     throw error;
   }
 };
+
+export const sendMessage = async (senderId, receiverId, content) => {
+  try {
+    // Check if a conversation already exists between these users
+    const conversationsData = await client.graphql({
+      query: queries.listConversations,
+      variables: {
+        filter: {
+          and: [
+            { participants: { contains: senderId } },
+            { participants: { contains: receiverId } }
+          ]
+        }
+      }
+    });
+
+    let conversationId;
+    const existingConversation = conversationsData.data.listConversations.items[0];
+
+    if (existingConversation) {
+      conversationId = existingConversation.id;
+    } else {
+      // If no conversation exists, create a new one
+      const newConversation = await client.graphql({
+        query: mutations.createConversation,
+        variables: { 
+          input: { 
+            participants: [senderId, receiverId],
+            lastMessageAt: new Date().toISOString() // Use lastMessageAt
+          } 
+        }
+      });
+      conversationId = newConversation.data.createConversation.id;
+    }
+
+    // Create the message
+    const newMessage = await client.graphql({
+      query: mutations.createMessage,
+      variables: {
+        input: {
+          content,
+          senderId,
+          receiverId,
+          conversationId,
+          createdAt: new Date().toISOString()
+        }
+      }
+    });
+
+    // Update the conversation's lastMessageAt
+    await client.graphql({
+      query: mutations.updateConversation,
+      variables: {
+        input: {
+          id: conversationId,
+          lastMessageAt: new Date().toISOString()
+        }
+      }
+    });
+
+    return newMessage.data.createMessage;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+};
+
+export const removeConversation = async (conversationId) => {
+  try {
+    await client.graphql({
+      query: deleteConversation,
+      variables: {
+        input: { id: conversationId }
+      }
+    });
+  } catch (error) {
+    console.error("Error removing conversation:", error);
+    throw error;
+  }
+};
+

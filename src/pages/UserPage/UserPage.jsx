@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form, message, Typography, Spin } from "antd";
+import { Form, message, Typography, Spin, Button } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
 import { fetchUserCarsRequest, getUserCar, deleteUserCar, createNewAuctionUser, playSwitchSound, playOpeningSound, playClosingSound, fetchAuctionCreator, fetchUserInfoById } from "../../functions";
 import CarCard from "../CarPages/CarCard";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { MessageOutlined } from '@ant-design/icons';
 
 const client = generateClient();
 
-const UserPage = () => {
+const UserPage = ({ userId, currentUserId }) => {
   const [userInfo, setUserInfo] = useState(null)
   const [cars, setCars] = useState([]);
   const [userLoading, setUserLoading] = useState(true);
@@ -120,7 +121,14 @@ const UserPage = () => {
          ))}
        </div>
      ) : (
-       <Typography.Title>You have no cars</Typography.Title>
+       <Typography.Title>User has no cars</Typography.Title>
+     )}
+     {userId !== currentUserId && (
+       <Link to={`/conversations/${id}`}>
+         <Button icon={<MessageOutlined />} type="primary">
+           Send Message
+         </Button>
+       </Link>
      )}
    </div>
  );
