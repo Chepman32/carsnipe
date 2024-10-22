@@ -73,7 +73,6 @@ const Store = ({ email, username }) => {
           <StoreItemCard key={item.id} item={item} email={email} username={username} />
       ))}
       </section>
-      <SlotMachine/>
     </div>
   );
 };
