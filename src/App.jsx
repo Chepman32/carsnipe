@@ -64,10 +64,7 @@ export default function App() {
         bidded: [],
         avatar: "avatar1",
         bio: "",
-        achievements: [
-          { name: "First Auction", date: "10-07-2024" },
-          { name: "First Car Bought", date: "10-09-2024" }
-        ]
+        achievements: []
       };
   
       const createdPlayer = await client.graphql({
