@@ -23,7 +23,7 @@ const avatarMap = {
   avatar3,
   avatar4,
   avatar5,
-  avatar6,
+  avatar6, 
 };
 
 const avatars = Object.keys(avatarMap);
