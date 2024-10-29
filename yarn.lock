@@ -193,7 +193,7 @@
     lodash "^4.17.21"
     tslib "^2.5.0"
 
-"@aws-amplify/storage@6.6.12":
+"@aws-amplify/storage@6.6.12", "@aws-amplify/storage@^6.6.12":
   version "6.6.12"
   resolved "https://registry.yarnpkg.com/@aws-amplify/storage/-/storage-6.6.12.tgz#0c827b4c94572876fda7d08d4764d89900ee8d51"
   integrity sha512-0qHc36zlOS3Ce6YlWdnxeI9EBVZDvarJAhjusf5TOnmbhHC+pv5FVBmq5H3HVuAyLNd1GQhN7H3jUWaCe6pwZg==
