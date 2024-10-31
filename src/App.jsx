@@ -23,6 +23,7 @@ import ProfileEditPage from "./pages/ProfileEditPage/ProfileEditPage";
 import { extractNameFromEmail, selectAvatar } from "./functions";
 import AchievementList from "./pages/AchievementList/AchievementList";
 import { MainPage } from "./pages/MainPage/MainPage";
+import './AuthStyles.css';
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -34,29 +35,24 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [creatingUser, setCreatingUser] = useState(false);
   const [money, setMoney] = useState();
+  const [activeTab, setActiveTab] = useState("signIn"); // New state for tab control
 
   const createNewPlayer = useCallback(async (username) => {
     if (!email) return;
-  
     try {
       setCreatingUser(true);
-  
       const existingUsers = await client.graphql({
         query: listUsers,
-        variables: {
-          filter: {
-            email: { eq: email }
-          }
-        }
+        variables: { filter: { email: { eq: email } } }
       });
-  
+
       if (existingUsers?.data?.listUsers?.items?.length > 0) {
         const existingUser = existingUsers.data.listUsers.items[0];
         setPlayerInfo(existingUser);
         setMoney(existingUser.money);
         return;
       }
-  
+
       const newUserData = {
         nickname: extractNameFromEmail(username) || username,
         email,
@@ -66,12 +62,12 @@ export default function App() {
         bio: "",
         achievements: []
       };
-  
+
       const createdPlayer = await client.graphql({
         query: createUser,
         variables: { input: newUserData }
       });
-  
+
       if (createdPlayer?.data?.createUser) {
         setPlayerInfo(createdPlayer.data.createUser);
         setMoney(createdPlayer.data.createUser.money);
@@ -88,16 +84,13 @@ export default function App() {
     try {
       const { signInDetails } = await getCurrentUser();
       setEmail(signInDetails?.loginId);
-      
-      const playersData = await client.graphql({
-        query: listUsers
-      });
-      
+
+      const playersData = await client.graphql({ query: listUsers });
       const playersList = playersData?.data?.listUsers.items;
       const user = playersList.find((u) => u?.email === signInDetails?.loginId);
       const isNewUser = !playersList.some((pl) => pl?.email === email);
       setIsNewUser(isNewUser);
-      
+
       if (!user) {
         await createNewPlayer(signInDetails?.loginId);
       } else {
@@ -127,12 +120,7 @@ export default function App() {
 
   if (loading || creatingUser) {
     return (
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh"
-      }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <Spin size="large" />
       </div>
     );
@@ -140,110 +128,37 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Authenticator>
-        {({ signOut, user }) => (
-          <>
-            {playerInfo && (
-              <main>
-                <CustomHeader
-                  money={money}
-                  username={playerInfo.nickname}
-                  email={email}
-                  nickname={playerInfo.nickname}
-                  avatar={selectAvatar(playerInfo.avatar)}
-                />
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <MainPage
-                        playerInfo={playerInfo}
-                        currentAuthenticatedUser={currentAuthenticatedUser}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/profileEditPage"
-                    element={
-                      <ProfileEditPage
-                        playerInfo={playerInfo}
-                        currentAuthenticatedUser={currentAuthenticatedUser}
-                        signOut={signOut}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/carsStore"
-                    element={
-                      <CarsStore
-                        playerInfo={playerInfo}
+      <div className="auth-container">
+        {/* Left Section */}
+        <div className="auth-left" />
+
+        {/* Right Section with Authenticator */}
+        <div className="auth-right">
+          <div className="authenticator-wrapper">
+            <Authenticator>
+              {({ signOut, user }) => (
+                <>
+                  {playerInfo && (
+                    <main>
+                      <CustomHeader
                         money={money}
-                        setMoney={setMoney}
+                        username={playerInfo.nickname}
+                        email={email}
+                        nickname={playerInfo.nickname}
+                        avatar={selectAvatar(playerInfo.avatar)}
                       />
-                    }
-                  />
-                  <Route
-                    path="/auctions"
-                    element={
-                      <AuctionPage
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/myCars"
-                    element={
-                      <MyCars
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route 
-                    path="/auctionsHub" 
-                    element={<AuctionsHub />} 
-                  />
-                  <Route
-                    path="/myBids"
-                    element={
-                      <MyBids
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/myAuctions"
-                    element={
-                      <MyAuctions
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/achievements"
-                    element={<AchievementList userId={playerInfo.id} />}
-                  />
-                  <Route 
-                    path="/paymentError" 
-                    element={<PaymentError />} 
-                  />
-                  <Route
-                    path="/store"
-                    element={<Store email={playerInfo.email} />}
-                  />
-                </Routes>
-              </main>
-            )}
-          </>
-        )}
-      </Authenticator>
+                      <Routes>
+                        <Route path="/" element={<MainPage playerInfo={playerInfo} currentAuthenticatedUser={currentAuthenticatedUser} />} />
+                        {/* Add other routes here */}
+                      </Routes>
+                    </main>
+                  )}
+                </>
+              )}
+            </Authenticator>
+          </div>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }

@@ -7,13 +7,6 @@ const awsmobile = {
     "aws_appsync_region": "us-east-2",
     "aws_appsync_authenticationType": "API_KEY",
     "aws_appsync_apiKey": "da2-twimivcatfbqfbaugxrm3u3qee",
-    "aws_cloud_logic_custom": [
-        {
-            "name": "carsnipePayments",
-            "endpoint": "https://f7vg5cavyf.execute-api.us-east-2.amazonaws.com/dev",
-            "region": "us-east-2"
-        }
-    ],
     "aws_cognito_identity_pool_id": "us-east-2:02a1c403-1122-415d-90b1-62a7a359ef9f",
     "aws_cognito_region": "us-east-2",
     "aws_user_pools_id": "us-east-2_7rD8IxlUc",

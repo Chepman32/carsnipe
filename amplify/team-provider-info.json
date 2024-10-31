@@ -14,12 +14,6 @@
     "categories": {
       "auth": {
         "carsnipe70333e94": {}
-      },
-      "function": {
-        "paymentsHandlerFunction": {
-          "deploymentBucketName": "amplify-carsnipe-dev-87216-deployment",
-          "s3Key": "amplify-builds/paymentsHandlerFunction-6a4b785363587143577a-build.zip"
-        }
       }
     }
   }
