@@ -128,13 +128,10 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="auth-container">
-        {/* Left Section */}
-        <div className="auth-left" />
-
-        {/* Right Section with Authenticator */}
-        <div className="auth-right">
-          <div className="authenticator-wrapper">
+      <div className={playerInfo== null || playerInfo === undefined  ? "auth-container" : ""}>
+        <div className={playerInfo== null || playerInfo === undefined  ? "auth-left" : ""} />
+        <div className={playerInfo== null || playerInfo === undefined  ? "auth-right" : ""} >
+          <div className={playerInfo== null || playerInfo === undefined  ? "authenticator-wrapper" : ""}>
             <Authenticator>
               {({ signOut, user }) => (
                 <>
@@ -148,9 +145,93 @@ export default function App() {
                         avatar={selectAvatar(playerInfo.avatar)}
                       />
                       <Routes>
-                        <Route path="/" element={<MainPage playerInfo={playerInfo} currentAuthenticatedUser={currentAuthenticatedUser} />} />
-                        {/* Add other routes here */}
-                      </Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <MainPage
+                        playerInfo={playerInfo}
+                        currentAuthenticatedUser={currentAuthenticatedUser}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/profileEditPage"
+                    element={
+                      <ProfileEditPage
+                        playerInfo={playerInfo}
+                        currentAuthenticatedUser={currentAuthenticatedUser}
+                        signOut={signOut}
+                        setPlayerInfo={setPlayerInfo}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/carsStore"
+                    element={
+                      <CarsStore
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/auctions"
+                    element={
+                      <AuctionPage
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/myCars"
+                    element={
+                      <MyCars
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route 
+                    path="/auctionsHub" 
+                    element={<AuctionsHub />} 
+                  />
+                  <Route
+                    path="/myBids"
+                    element={
+                      <MyBids
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/myAuctions"
+                    element={
+                      <MyAuctions
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/achievements"
+                    element={<AchievementList userId={playerInfo.id} />}
+                  />
+                  <Route 
+                    path="/paymentError" 
+                    element={<PaymentError />} 
+                  />
+                  <Route
+                    path="/store"
+                    element={<Store email={playerInfo.email} />}
+                  />
+                </Routes>
                     </main>
                   )}
                 </>
