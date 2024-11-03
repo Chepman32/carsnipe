@@ -29,7 +29,7 @@
 
 .auth-left {
   flex: 1;
-  background-image: url(./assets/images/welcome.jpeg);
+  background-image: url(./assets/images/welcome.png);
   background-size: cover;
   background-position: center;
 }
