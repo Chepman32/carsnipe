@@ -14,7 +14,7 @@
   background: url(./assets//icons/hammer-green.png);
   background-size: contain;
   background-repeat: no-repeat;
-  color: #0072ff;
+  color: #000000;
   border-bottom: 2px solid #0072ff;
 }
 
@@ -78,8 +78,8 @@
 }
 
 .amplify-form-link {
-  color: #0072ff;
   margin-top: 1rem;
+  font-size: 1.4rem;
 }
 
 @media (max-width: 768px) {
