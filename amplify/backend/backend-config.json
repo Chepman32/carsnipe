@@ -4,15 +4,10 @@
       "dependsOn": [],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 30,
-              "description": "api key description"
+              "apiKeyExpirationDays": 7
             },
             "authenticationType": "API_KEY"
           }
@@ -20,24 +15,10 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
-    },
-    "carsnipePayments": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "paymentsHandlerFunction"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
     }
   },
   "auth": {
-    "carsnipe70333e94": {
+    "carsnipeb047d903": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -64,29 +45,11 @@
       "service": "Cognito"
     }
   },
-  "function": {
-    "paymentsHandlerFunction": {
-      "build": true,
+  "storage": {
+    "media": {
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_paymentsHandlerFunction_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentsHandlerFunction"
-        }
-      ]
-    },
-    "AMPLIFY_function_paymentsHandlerFunction_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentsHandlerFunction"
-        }
-      ]
+      "service": "S3"
     }
   }
 }
