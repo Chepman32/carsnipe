@@ -10,6 +10,7 @@ import avatar3 from "./assets/images/avatars/images (1).jpeg"
 import avatar4 from "./assets/images/avatars/images (2).jpeg"
 import avatar5 from "./assets/images/avatars/images (3).jpeg"
 import avatar6 from "./assets/images/avatars/images.jpeg"
+import { message } from "antd";
 
 const client = generateClient();
 
@@ -301,11 +302,32 @@ export const fetchUserAchievementsList = async (userId) => {
       },
     });
 
-    // Ensure we return the correct field containing the achievements
-    return userData.data.getUser.achievements || []; // Return an empty array if no achievements
+    return userData.data.getUser.achievements || [];
   } catch (error) {
     console.error("Error fetching user achievements:", error);
-    return []; // Return an empty array on error to avoid breaking the code
+    return [];
+  }
+};
+
+export const checkAndUpdateAchievements = async (playerInfo) => {
+  try {
+    const userAchievements = await fetchUserAchievementsList(playerInfo.id);
+    if (!userAchievements.some(achievement => achievement.name === "First One")) {
+      const newAchievement = { name: "First One", date: new Date().toISOString() };
+      const updatedAchievements = [...userAchievements, newAchievement];
+      await client.graphql({
+        query: mutations.updateUser,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            achievements: updatedAchievements,
+          },
+        },
+      });
+      message.success("Achievement unlocked: First one");
+    }
+  } catch (error) {
+    console.error("Error checking and updating achievements:", error);
   }
 };
 
@@ -380,6 +402,8 @@ export const selectAvatar = (avatar) => {
       return avatar4;
     case "avatar5":
       return avatar5;
+      case "avatar6":
+      return avatar6;
     default:
       return avatar1;
   }
@@ -392,4 +416,9 @@ export function extractNameFromEmail(email) {
 export const getImageSource = (make, model) => {
   const imageName = `${make} ${model}.png`;
   return require(`./assets/images/${imageName}`);
+};
+
+export const getAchievementImageSource = (title) => {
+  const imageName = `${title}.png`;
+  return require(`./assets/images/achievements/${imageName}`);
 };

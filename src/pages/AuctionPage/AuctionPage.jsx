@@ -12,7 +12,8 @@ import {
   playOpeningSound,
   playSwitchSound,
   playClosingSound,
-  fetchUserAchievementsList
+  fetchUserAchievementsList,
+  checkAndUpdateAchievements
 } from "../../functions";
 import { isMobile } from 'react-device-detect';
 import AuctionPageItem from "./AuctionPageItem";
@@ -72,32 +73,6 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
     }
   }, [playerInfo.nickname]);
 
-
-  const checkAndUpdateAchievements = async () => {
-    try {
-      const userAchievements = await fetchUserAchievementsList(playerInfo.id);
-
-      if (!userAchievements.some(achievement => achievement.name === "First One")) {
-        const newAchievement = { name: "First One", date: new Date().toISOString() };
-        const updatedAchievements = [...userAchievements, newAchievement];
-
-        await client.graphql({
-          query: mutations.updateUser,
-          variables: {
-            input: {
-              id: playerInfo.id,
-              achievements: updatedAchievements,
-            },
-          },
-        });
-
-        message.success("Achievement unlocked: First one");
-      }
-    } catch (error) {
-      console.error("Error checking and updating achievements:", error);
-    }
-  };
-
   const increaseBid = async (auction) => {
     try {
       if (money < auction.buy) {
@@ -135,7 +110,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
         };
 
         if (userBidded.length === 0) {
-          await checkAndUpdateAchievements();
+          await checkAndUpdateAchievements(playerInfo);
         }
 
         await client.graphql({
