@@ -20,7 +20,7 @@ import MyAuctions from "./pages/AuctionPage/MyAuctions";
 import PaymentError from "./components/PaymentError";
 import Store from "./pages/Store/Store";
 import ProfileEditPage from "./pages/ProfileEditPage/ProfileEditPage";
-import { extractNameFromEmail, selectAvatar } from "./functions";
+import { checkAndUpdateAchievements, extractNameFromEmail, selectAvatar } from "./functions";
 import AchievementList from "./pages/AchievementList/AchievementList";
 import { MainPage } from "./pages/MainPage/MainPage";
 import './AuthStyles.css';
@@ -35,7 +35,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [creatingUser, setCreatingUser] = useState(false);
   const [money, setMoney] = useState();
-  const [activeTab, setActiveTab] = useState("signIn"); // New state for tab control
+
+  useEffect(() => {
+    playerInfo?.id && checkAndUpdateAchievements(playerInfo.id)
+  }, [playerInfo?.id])
 
   const createNewPlayer = useCallback(async (username) => {
     if (!email) return;
@@ -60,7 +63,8 @@ export default function App() {
         bidded: [],
         avatar: "avatar1",
         bio: "",
-        achievements: []
+        achievements: [],
+        sold: []
       };
 
       const createdPlayer = await client.graphql({

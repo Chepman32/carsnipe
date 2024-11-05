@@ -293,6 +293,22 @@ export const fetchUserBiddedList = async (userId) => {
   }
 };
 
+export const fetchUserData = async (userId) => {
+  try {
+    const userData = await client.graphql({
+      query: queries.getUser,
+      variables: {
+        id: userId,
+      },
+    });
+
+    return userData.data.getUser || null;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return [];
+  }
+};
+
 export const fetchUserAchievementsList = async (userId) => {
   try {
     const userData = await client.graphql({
@@ -325,6 +341,20 @@ export const checkAndUpdateAchievements = async (playerInfo) => {
         },
       });
       message.success("Achievement unlocked: First one");
+    }
+    if (fetchUserData(playerInfo.id).sold.length < 10 && !userAchievements.some(achievement => achievement.name === "Smooth Seller")) {
+      const newAchievement = { name: "Smooth Seller", date: new Date().toISOString() };
+      const updatedAchievements = [...userAchievements, newAchievement];
+      await client.graphql({
+        query: mutations.updateUser,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            achievements: updatedAchievements,
+          },
+        },
+      });
+      message.success("Achievement unlocked: Smooth Seller");
     }
   } catch (error) {
     console.error("Error checking and updating achievements:", error);

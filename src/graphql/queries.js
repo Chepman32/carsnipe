@@ -28,6 +28,7 @@ export const getUser = /* GraphQL */ `
         date
         __typename
       }
+      sold
       createdAt
       updatedAt
       __typename
@@ -48,6 +49,7 @@ export const listUsers = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -168,6 +170,7 @@ export const getUserCar = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -222,6 +225,7 @@ export const getAuctionUser = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename

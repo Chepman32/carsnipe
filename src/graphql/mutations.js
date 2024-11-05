@@ -31,6 +31,7 @@ export const createUser = /* GraphQL */ `
         date
         __typename
       }
+      sold
       createdAt
       updatedAt
       __typename
@@ -67,6 +68,7 @@ export const updateUser = /* GraphQL */ `
         date
         __typename
       }
+      sold
       createdAt
       updatedAt
       __typename
@@ -103,6 +105,7 @@ export const deleteUser = /* GraphQL */ `
         date
         __typename
       }
+      sold
       createdAt
       updatedAt
       __typename
@@ -278,6 +281,7 @@ export const createUserCar = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -315,6 +319,7 @@ export const updateUserCar = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -352,6 +357,7 @@ export const deleteUserCar = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -389,6 +395,7 @@ export const createAuctionUser = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -433,6 +440,7 @@ export const updateAuctionUser = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename
@@ -477,6 +485,7 @@ export const deleteAuctionUser = /* GraphQL */ `
         email
         avatar
         bio
+        sold
         createdAt
         updatedAt
         __typename

@@ -163,14 +163,18 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
             setMoney(newMoney);
 
             const auctionUser = await fetchAuctionUser(selectedAuction.id);
+            
+            const updatedSeller = {
+              id: auctionUser.id,
+              money: auctionUser.money + selectedAuction.buy,
+              sold: [...(auctionUser.sold || []), selectedAuction.id],
+            };
+
             await client.graphql({
-                query: mutations.updateUser,
-                variables: {
-                    input: {
-                        id: auctionUser.id,
-                        money: auctionUser.money + selectedAuction.buy,
-                    },
-                },
+              query: mutations.updateUser,
+              variables: {
+                input: updatedSeller,
+              },
             });
 
             await client.graphql({
