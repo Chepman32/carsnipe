@@ -6,7 +6,7 @@ import * as mutations from '../../graphql/mutations';
 import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
 import CarCard from "./CarCard";
-import { createNewUserCar, playSwitchSound, playOpeningSound, playClosingSound } from "../../functions";
+import { createNewUserCar, playSwitchSound, playOpeningSound, playClosingSound, checkAndUpdateAchievements } from "../../functions";
 import { CreditWarningModal } from "../../components/CreditWarningModal/CreditWarningModal";
 
 const { Option } = Select;
@@ -73,40 +73,40 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
  }, [cars, selectedCarIndex, carDetailsVisible]);
 
  const buyCar = async (car) => {
-   if (playerInfo && playerInfo.id && money >= car.price) {
-     playSwitchSound();
-     setMoney(money - car.price);
-     try {
-       setLoadingBuy(true);
+  if (playerInfo && playerInfo.id && money >= car.price) {
+    playSwitchSound();
+    setMoney(money - car.price);
+    try {
+      setLoadingBuy(true);
 
-       await client.graphql({
-         query: mutations.updateUser,
-         variables: {
-           input: {
-             id: playerInfo.id,
-             money: money - car.price,
-           },
-         },
-       });
+      await client.graphql({
+        query: mutations.updateUser,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            money: money - car.price,
+            totalSpent: (playerInfo.totalSpent || 0) + car.price
+          },
+        },
+      });
 
-       // Create a new user-car association
-       createNewUserCar(playerInfo.id, car.id);
-
-       message.success('Car successfully bought!');
-     } catch (err) {
-       console.log(err);
-       message.error('Error buying car');
-     } finally {
-       setLoadingBuy(false);
-       setSelectedCar(null);
-     }
-   }
-   else if (playerInfo && money < car.price) {
-     setCreditWarningModalvisible(true);
-     handleCarDetailsCancel();
-     return
-   }
- };
+      createNewUserCar(playerInfo.id, car.id);
+      message.success('Car successfully bought!');
+    } catch (err) {
+      console.log(err);
+      message.error('Error buying car');
+    } finally {
+      setLoadingBuy(false);
+      setSelectedCar(null);
+    }
+  }
+  else if (playerInfo && money < car.price) {
+    setCreditWarningModalvisible(true);
+    handleCarDetailsCancel();
+    return
+  }
+  await checkAndUpdateAchievements(playerInfo);
+};
 
  const showCarDetailsModal = () => {
    setCarDetailsVisible(true);

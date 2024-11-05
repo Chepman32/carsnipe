@@ -58,6 +58,12 @@ const ProfileEditPage = ({ playerInfo, currentAuthenticatedUser, signOut, setPla
         nickname,
         bio,
         avatar: selectedAvatar,
+        totalCarsOwned: playerInfo.totalCarsOwned, // Assuming we retain or increment this based on usage elsewhere
+        totalAuctionsParticipated: playerInfo.totalAuctionsParticipated,
+        totalBidsPlaced: playerInfo.totalBidsPlaced,
+        totalSpent: playerInfo.totalSpent,
+        totalAuctionsWon: playerInfo.totalAuctionsWon,
+        totalProfitEarned: playerInfo.totalProfitEarned,
       };
       await client.graphql({
         query: mutations.updateUser,

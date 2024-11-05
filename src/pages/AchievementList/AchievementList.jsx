@@ -109,7 +109,6 @@ const AchievementList = ({ userId }) => {
   const [hovered, setHovered] = useState(null);
   const [userAchievements, setUserAchievements] = useState([]);
 
-  // Fetch user achievements when the component mounts
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
@@ -119,11 +118,9 @@ const AchievementList = ({ userId }) => {
         console.error("Error fetching user achievements:", error);
       }
     };
-    
     fetchAchievements();
   }, [userId]);
 
-  // Check if the user has the achievement
   const userHasAchievement = (title) => {
     return userAchievements.some(achievement => achievement.name === title);
   };

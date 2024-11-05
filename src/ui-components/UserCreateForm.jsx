@@ -195,6 +195,12 @@ export default function UserCreateForm(props) {
     avatar: "",
     bio: "",
     sold: [],
+    totalCarsOwned: "",
+    totalAuctionsParticipated: "",
+    totalBidsPlaced: "",
+    totalSpent: "",
+    totalAuctionsWon: "",
+    totalProfitEarned: "",
   };
   const [nickname, setNickname] = React.useState(initialValues.nickname);
   const [money, setMoney] = React.useState(initialValues.money);
@@ -202,6 +208,21 @@ export default function UserCreateForm(props) {
   const [avatar, setAvatar] = React.useState(initialValues.avatar);
   const [bio, setBio] = React.useState(initialValues.bio);
   const [sold, setSold] = React.useState(initialValues.sold);
+  const [totalCarsOwned, setTotalCarsOwned] = React.useState(
+    initialValues.totalCarsOwned
+  );
+  const [totalAuctionsParticipated, setTotalAuctionsParticipated] =
+    React.useState(initialValues.totalAuctionsParticipated);
+  const [totalBidsPlaced, setTotalBidsPlaced] = React.useState(
+    initialValues.totalBidsPlaced
+  );
+  const [totalSpent, setTotalSpent] = React.useState(initialValues.totalSpent);
+  const [totalAuctionsWon, setTotalAuctionsWon] = React.useState(
+    initialValues.totalAuctionsWon
+  );
+  const [totalProfitEarned, setTotalProfitEarned] = React.useState(
+    initialValues.totalProfitEarned
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setNickname(initialValues.nickname);
@@ -211,6 +232,12 @@ export default function UserCreateForm(props) {
     setBio(initialValues.bio);
     setSold(initialValues.sold);
     setCurrentSoldValue("");
+    setTotalCarsOwned(initialValues.totalCarsOwned);
+    setTotalAuctionsParticipated(initialValues.totalAuctionsParticipated);
+    setTotalBidsPlaced(initialValues.totalBidsPlaced);
+    setTotalSpent(initialValues.totalSpent);
+    setTotalAuctionsWon(initialValues.totalAuctionsWon);
+    setTotalProfitEarned(initialValues.totalProfitEarned);
     setErrors({});
   };
   const [currentSoldValue, setCurrentSoldValue] = React.useState("");
@@ -222,6 +249,12 @@ export default function UserCreateForm(props) {
     avatar: [],
     bio: [],
     sold: [],
+    totalCarsOwned: [],
+    totalAuctionsParticipated: [],
+    totalBidsPlaced: [],
+    totalSpent: [],
+    totalAuctionsWon: [],
+    totalProfitEarned: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -255,6 +288,12 @@ export default function UserCreateForm(props) {
           avatar,
           bio,
           sold,
+          totalCarsOwned,
+          totalAuctionsParticipated,
+          totalBidsPlaced,
+          totalSpent,
+          totalAuctionsWon,
+          totalProfitEarned,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -323,6 +362,12 @@ export default function UserCreateForm(props) {
               avatar,
               bio,
               sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             value = result?.nickname ?? value;
@@ -356,6 +401,12 @@ export default function UserCreateForm(props) {
               avatar,
               bio,
               sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             value = result?.money ?? value;
@@ -385,6 +436,12 @@ export default function UserCreateForm(props) {
               avatar,
               bio,
               sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -414,6 +471,12 @@ export default function UserCreateForm(props) {
               avatar: value,
               bio,
               sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             value = result?.avatar ?? value;
@@ -443,6 +506,12 @@ export default function UserCreateForm(props) {
               avatar,
               bio: value,
               sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             value = result?.bio ?? value;
@@ -468,6 +537,12 @@ export default function UserCreateForm(props) {
               avatar,
               bio,
               sold: values,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
             };
             const result = onChange(modelFields);
             values = result?.sold ?? values;
@@ -507,6 +582,247 @@ export default function UserCreateForm(props) {
           {...getOverrideProps(overrides, "sold")}
         ></TextField>
       </ArrayField>
+      <TextField
+        label="Total cars owned"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalCarsOwned}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned: value,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalCarsOwned ?? value;
+          }
+          if (errors.totalCarsOwned?.hasError) {
+            runValidationTasks("totalCarsOwned", value);
+          }
+          setTotalCarsOwned(value);
+        }}
+        onBlur={() => runValidationTasks("totalCarsOwned", totalCarsOwned)}
+        errorMessage={errors.totalCarsOwned?.errorMessage}
+        hasError={errors.totalCarsOwned?.hasError}
+        {...getOverrideProps(overrides, "totalCarsOwned")}
+      ></TextField>
+      <TextField
+        label="Total auctions participated"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalAuctionsParticipated}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned,
+              totalAuctionsParticipated: value,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalAuctionsParticipated ?? value;
+          }
+          if (errors.totalAuctionsParticipated?.hasError) {
+            runValidationTasks("totalAuctionsParticipated", value);
+          }
+          setTotalAuctionsParticipated(value);
+        }}
+        onBlur={() =>
+          runValidationTasks(
+            "totalAuctionsParticipated",
+            totalAuctionsParticipated
+          )
+        }
+        errorMessage={errors.totalAuctionsParticipated?.errorMessage}
+        hasError={errors.totalAuctionsParticipated?.hasError}
+        {...getOverrideProps(overrides, "totalAuctionsParticipated")}
+      ></TextField>
+      <TextField
+        label="Total bids placed"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalBidsPlaced}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced: value,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalBidsPlaced ?? value;
+          }
+          if (errors.totalBidsPlaced?.hasError) {
+            runValidationTasks("totalBidsPlaced", value);
+          }
+          setTotalBidsPlaced(value);
+        }}
+        onBlur={() => runValidationTasks("totalBidsPlaced", totalBidsPlaced)}
+        errorMessage={errors.totalBidsPlaced?.errorMessage}
+        hasError={errors.totalBidsPlaced?.hasError}
+        {...getOverrideProps(overrides, "totalBidsPlaced")}
+      ></TextField>
+      <TextField
+        label="Total spent"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalSpent}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent: value,
+              totalAuctionsWon,
+              totalProfitEarned,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalSpent ?? value;
+          }
+          if (errors.totalSpent?.hasError) {
+            runValidationTasks("totalSpent", value);
+          }
+          setTotalSpent(value);
+        }}
+        onBlur={() => runValidationTasks("totalSpent", totalSpent)}
+        errorMessage={errors.totalSpent?.errorMessage}
+        hasError={errors.totalSpent?.hasError}
+        {...getOverrideProps(overrides, "totalSpent")}
+      ></TextField>
+      <TextField
+        label="Total auctions won"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalAuctionsWon}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon: value,
+              totalProfitEarned,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalAuctionsWon ?? value;
+          }
+          if (errors.totalAuctionsWon?.hasError) {
+            runValidationTasks("totalAuctionsWon", value);
+          }
+          setTotalAuctionsWon(value);
+        }}
+        onBlur={() => runValidationTasks("totalAuctionsWon", totalAuctionsWon)}
+        errorMessage={errors.totalAuctionsWon?.errorMessage}
+        hasError={errors.totalAuctionsWon?.hasError}
+        {...getOverrideProps(overrides, "totalAuctionsWon")}
+      ></TextField>
+      <TextField
+        label="Total profit earned"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalProfitEarned}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              nickname,
+              money,
+              email,
+              avatar,
+              bio,
+              sold,
+              totalCarsOwned,
+              totalAuctionsParticipated,
+              totalBidsPlaced,
+              totalSpent,
+              totalAuctionsWon,
+              totalProfitEarned: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalProfitEarned ?? value;
+          }
+          if (errors.totalProfitEarned?.hasError) {
+            runValidationTasks("totalProfitEarned", value);
+          }
+          setTotalProfitEarned(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("totalProfitEarned", totalProfitEarned)
+        }
+        errorMessage={errors.totalProfitEarned?.errorMessage}
+        hasError={errors.totalProfitEarned?.hasError}
+        {...getOverrideProps(overrides, "totalProfitEarned")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
