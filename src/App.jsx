@@ -38,7 +38,7 @@ export default function App() {
 
   useEffect(() => {
     playerInfo?.id && checkAndUpdateAchievements(playerInfo.id)
-  }, [playerInfo?.id])
+  }, [playerInfo?.id, money])
 
   const createNewPlayer = useCallback(async (username) => {
     if (!email) return;

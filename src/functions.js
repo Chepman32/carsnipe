@@ -444,11 +444,11 @@ export const getAchievementImageSource = (title) => {
 };
 
 export async function checkAndUpdateAchievements(user) {
-  const  info = await fetchUserData(user.id);
+  const info = await fetchUserData(user.id);
   try {
     const userAchievements = await fetchUserAchievementsList(user.id);
     const userCars = await fetchUserCarsRequest(user.id);
-    const userBidded = await fetchUserBiddedList(user.id); // Fetch bid history correctly
+    const userBidded = await fetchUserBiddedList(user.id);
     const userSold = info.sold || [];
     const userNickname = user.nickname;
 
@@ -461,6 +461,8 @@ export async function checkAndUpdateAchievements(user) {
       }
     };
 
+    console.log("userBidded", userBidded.length);
+
     if (userBidded.length === 0) addAchievement("First One");
     if (userCars.length >= 3) addAchievement("Starter Pack");
     if (userCars.length >= 5) addAchievement("New Collector");
@@ -468,7 +470,6 @@ export async function checkAndUpdateAchievements(user) {
 
     const userAuctionsParticipated = userBidded.map(bid => bid.auctionId);
     const uniqueAuctions = new Set(userAuctionsParticipated);
-
     if (uniqueAuctions.size >= 20) addAchievement("Auction Veteran");
 
     const totalSpent = userBidded.reduce((sum, bid) => sum + bid.bidValue, 0);
