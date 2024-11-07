@@ -12,14 +12,14 @@
       "AmplifyAppId": "d1pt1vh5nx35ze"
     },
     "categories": {
-      "auth": {
-        "carsnipeb047d903": {}
-      },
       "storage": {
         "media": {}
       },
       "api": {
         "carsnipe": {}
+      },
+      "auth": {
+        "carsnipe60c5d5e1": {}
       }
     }
   }

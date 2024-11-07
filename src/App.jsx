@@ -24,6 +24,8 @@ import { checkAndUpdateAchievements, extractNameFromEmail, selectAvatar } from "
 import AchievementList from "./pages/AchievementList/AchievementList";
 import { MainPage } from "./pages/MainPage/MainPage";
 import './AuthStyles.css';
+import MusicUploadPage from "./pages/MusicUploadPage/MusicUploadPage";
+import MusicLibraryPage from "./pages/MusicLibraryPage/MusicLibraryPage";
 
 const client = generateClient();
 Amplify.configure(awsExports);
@@ -234,6 +236,14 @@ export default function App() {
                   <Route
                     path="/store"
                     element={<Store email={playerInfo.email} />}
+                        />
+                        <Route
+                    path="/musicUpload"
+                    element={<MusicUploadPage />}
+                        />
+                        <Route
+                    path="/musicLibraryPage"
+                    element={<MusicLibraryPage />}
                   />
                 </Routes>
                     </main>
