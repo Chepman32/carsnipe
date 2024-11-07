@@ -1,7 +1,7 @@
 {
-  "resourceName": "media",
-  "policyUUID": "72f5e696",
-  "bucketName": "media",
+  "resourceName": "music",
+  "policyUUID": "72877da9",
+  "bucketName": "musicbucket",
   "storageAccess": "auth",
   "guestAccess": [],
   "authAccess": [

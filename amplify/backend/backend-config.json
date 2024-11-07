@@ -18,7 +18,7 @@
     }
   },
   "auth": {
-    "carsnipe60c5d5e1": {
+    "carsnipec9a5b799": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -46,7 +46,7 @@
     }
   },
   "storage": {
-    "media": {
+    "music": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"
