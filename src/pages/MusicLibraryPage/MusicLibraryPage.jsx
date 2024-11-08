@@ -1,80 +1,81 @@
 import React, { useEffect, useState } from 'react';
-import { list, getUrl } from '@aws-amplify/storage';
-import { Table, Button, notification } from 'antd';
-import { PlayCircleOutlined, DownloadOutlined } from '@ant-design/icons';
+import { list } from 'aws-amplify/storage';
+import { Table, notification } from 'antd';
 
 const MusicLibraryPage = () => {
   const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchFiles = async () => {
     setLoading(true);
     try {
-      const fileData = await list('public/album/2024/'); // List files from the specified path
-      const filesWithUrls = await Promise.all(
-        fileData.map(async (file) => {
-          const url = await getUrl(file.key); // Get public URL for each file
-          return { ...file, url };
-        })
-      );
-      setFiles(filesWithUrls);
+      const response = await list({
+        path: 'public/photos/', // Specify your path here
+        options: {
+          pageSize: 20, // Optional: use pagination
+        },
+      });
+      console.log("File list response:", response); // Log response to inspect structure
+
+      // Check if response.items exists and is an array
+      if (response && Array.isArray(response.items)) {
+        setFiles(response.items);
+      } else {
+        console.error("Unexpected response structure:", response);
+        setFiles([]); // Set empty array if response is unexpected
+        notification.error({
+          message: "Error",
+          description: "No files found or failed to retrieve files",
+        });
+      }
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching files:", error);
       notification.error({
-        message: 'Error',
-        description: 'Failed to fetch files from S3',
+        message: "Error",
+        description: "Failed to fetch files from S3",
       });
+      setLoading(false);
     }
-    setLoading(false);
   };
+
+  useEffect(() => {
+    fetchFiles();
+  }, []);
 
   const columns = [
     {
       title: 'File Name',
       dataIndex: 'key',
       key: 'key',
-      render: (text) => text.replace('public/album/2024/', ''),
+      render: (text) => text.split('/').pop(),
     },
     {
-      title: 'Actions',
-      key: 'actions',
-      render: (record) => (
-        <div>
-          <Button
-            type="primary"
-            icon={<PlayCircleOutlined />}
-            onClick={() => window.open(record.url, '_blank')}
-            style={{ marginRight: 8 }}
-          >
-            Play
-          </Button>
-          <Button
-            type="default"
-            icon={<DownloadOutlined />}
-            href={record.url}
-            target="_blank"
-            download
-          >
-            Download
-          </Button>
-        </div>
-      ),
+      title: 'Size',
+      dataIndex: 'size',
+      key: 'size',
+      render: (size) => (size ? `${size} bytes` : 'Folder'),
+    },
+    {
+      title: 'Last Modified',
+      dataIndex: 'lastModified',
+      key: 'lastModified',
+      render: (date) => new Date(date).toLocaleString(),
     },
   ];
 
-  useEffect(() => {
-    fetchFiles();
-  }, []);
-
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <h2>Music Library</h2>
       <Table
-        columns={columns}
         dataSource={files}
+        columns={columns}
         rowKey="key"
         loading={loading}
-        pagination={{ pageSize: 5 }}
+        pagination={{
+          pageSize: 20,
+          position: ["bottomCenter"],
+        }}
       />
     </div>
   );
