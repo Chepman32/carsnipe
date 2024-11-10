@@ -1,7 +1,9 @@
 {
   "name": "carsnipe",
   "version": "0.1.0",
+  "main": "main.js",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@aws-amplify/ui-react": "^6.5.2",
     "@testing-library/jest-dom": "^5.17.0",
@@ -23,7 +25,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-dev": "NODE_ENV=development electron .",
+    "package": "electron-packager . carsnipe --platform=win32 --arch=x64 --out=dist",
+    "package-mac": "electron-packager . carsnipe --platform=darwin --arch=x64 --out=dist --icon=public/appIcon.icns --overwrite"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +50,9 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.25.7"
+    "@babel/preset-react": "^7.25.7",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.0",
+    "electron-packager": "^17.1.0"
   }
 }
