@@ -7,14 +7,17 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      nodeIntegration: false
+      enableRemoteModule: false, // for security
+      nodeIntegration: false,
+      webSecurity: false // disables CORS and allows file:// protocol
     }
   });
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:3000');
+    mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.resolve(__dirname, 'build', 'index.html')).catch(err => console.error("Failed to load index.html:", err));
+    mainWindow.loadFile(path.join(__dirname, 'build', 'index.html'));
   }
 }
 
