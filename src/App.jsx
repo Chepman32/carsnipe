@@ -1,10 +1,11 @@
+// App.js
 import React, { useCallback, useEffect, useState } from "react";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
 import { getCurrentUser } from "aws-amplify/auth";
 import { Hub } from "aws-amplify/utils";
 import { Authenticator } from "@aws-amplify/ui-react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import { listUsers } from "./graphql/queries";
 import { createUser } from "./graphql/mutations";
@@ -30,6 +31,25 @@ import MusicLibraryPage from "./pages/MusicLibraryPage/MusicLibraryPage";
 const client = generateClient();
 Amplify.configure(awsExports);
 
+function BackspaceHandler() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Backspace") {
+        navigate(-1); // Navigate back to the previous page
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [navigate]);
+
+  return null; // This component only sets up the global Backspace handler
+}
+
 export default function App() {
   const [isNewUser, setIsNewUser] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(null);
@@ -39,8 +59,8 @@ export default function App() {
   const [money, setMoney] = useState();
 
   useEffect(() => {
-    playerInfo?.id && checkAndUpdateAchievements(playerInfo.id)
-  }, [playerInfo?.id, money])
+    playerInfo?.id && checkAndUpdateAchievements(playerInfo.id);
+  }, [playerInfo?.id, money]);
 
   const createNewPlayer = useCallback(async (username) => {
     if (!email) return;
@@ -50,14 +70,12 @@ export default function App() {
         query: listUsers,
         variables: { filter: { email: { eq: email } } }
       });
-
       if (existingUsers?.data?.listUsers?.items?.length > 0) {
         const existingUser = existingUsers.data.listUsers.items[0];
         setPlayerInfo(existingUser);
         setMoney(existingUser.money);
         return;
       }
-
       const newUserData = {
         nickname: extractNameFromEmail(username) || username,
         email,
@@ -68,12 +86,10 @@ export default function App() {
         achievements: [],
         sold: []
       };
-
       const createdPlayer = await client.graphql({
         query: createUser,
         variables: { input: newUserData }
       });
-
       if (createdPlayer?.data?.createUser) {
         setPlayerInfo(createdPlayer.data.createUser);
         setMoney(createdPlayer.data.createUser.money);
@@ -90,13 +106,11 @@ export default function App() {
     try {
       const { signInDetails } = await getCurrentUser();
       setEmail(signInDetails?.loginId);
-
       const playersData = await client.graphql({ query: listUsers });
       const playersList = playersData?.data?.listUsers.items;
       const user = playersList.find((u) => u?.email === signInDetails?.loginId);
       const isNewUser = !playersList.some((pl) => pl?.email === email);
       setIsNewUser(isNewUser);
-
       if (!user) {
         await createNewPlayer(signInDetails?.loginId);
       } else {
@@ -133,11 +147,12 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <div className={playerInfo== null || playerInfo === undefined  ? "auth-container" : ""}>
-        <div className={playerInfo== null || playerInfo === undefined  ? "auth-left" : ""} />
-        <div className={playerInfo== null || playerInfo === undefined  ? "auth-right" : ""} >
-          <div className={playerInfo== null || playerInfo === undefined  ? "authenticator-wrapper" : ""}>
+    <HashRouter>
+      <BackspaceHandler /> {/* Global Backspace handler */}
+      <div className={playerInfo == null || playerInfo === undefined ? "auth-container" : ""}>
+        <div className={playerInfo == null || playerInfo === undefined ? "auth-left" : ""} />
+        <div className={playerInfo == null || playerInfo === undefined ? "auth-right" : ""}>
+          <div className={playerInfo == null || playerInfo === undefined ? "authenticator-wrapper" : ""}>
             <Authenticator>
               {({ signOut, user }) => (
                 <>
@@ -151,101 +166,101 @@ export default function App() {
                         avatar={selectAvatar(playerInfo.avatar)}
                       />
                       <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <MainPage
-                        playerInfo={playerInfo}
-                        currentAuthenticatedUser={currentAuthenticatedUser}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/profileEditPage"
-                    element={
-                      <ProfileEditPage
-                        playerInfo={playerInfo}
-                        currentAuthenticatedUser={currentAuthenticatedUser}
-                        signOut={signOut}
-                        setPlayerInfo={setPlayerInfo}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/carsStore"
-                    element={
-                      <CarsStore
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/auctions"
-                    element={
-                      <AuctionPage
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/myCars"
-                    element={
-                      <MyCars
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route 
-                    path="/auctionsHub" 
-                    element={<AuctionsHub />} 
-                  />
-                  <Route
-                    path="/myBids"
-                    element={
-                      <MyBids
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/myAuctions"
-                    element={
-                      <MyAuctions
-                        playerInfo={playerInfo}
-                        money={money}
-                        setMoney={setMoney}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/achievements"
-                    element={<AchievementList userId={playerInfo.id} />}
-                  />
-                  <Route 
-                    path="/paymentError" 
-                    element={<PaymentError />} 
-                  />
-                  <Route
-                    path="/store"
-                    element={<Store email={playerInfo.email} />}
+                        <Route
+                          path="/"
+                          element={
+                            <MainPage
+                              playerInfo={playerInfo}
+                              currentAuthenticatedUser={currentAuthenticatedUser}
+                            />
+                          }
                         />
                         <Route
-                    path="/musicUpload"
-                    element={<MusicUploadPage />}
+                          path="/profileEditPage"
+                          element={
+                            <ProfileEditPage
+                              playerInfo={playerInfo}
+                              currentAuthenticatedUser={currentAuthenticatedUser}
+                              signOut={signOut}
+                              setPlayerInfo={setPlayerInfo}
+                            />
+                          }
                         />
                         <Route
-                    path="/musicLibraryPage"
-                    element={<MusicLibraryPage />}
-                  />
-                </Routes>
+                          path="/carsStore"
+                          element={
+                            <CarsStore
+                              playerInfo={playerInfo}
+                              money={money}
+                              setMoney={setMoney}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/auctions"
+                          element={
+                            <AuctionPage
+                              playerInfo={playerInfo}
+                              money={money}
+                              setMoney={setMoney}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/myCars"
+                          element={
+                            <MyCars
+                              playerInfo={playerInfo}
+                              money={money}
+                              setMoney={setMoney}
+                            />
+                          }
+                        />
+                        <Route 
+                          path="/auctionsHub" 
+                          element={<AuctionsHub />} 
+                        />
+                        <Route
+                          path="/myBids"
+                          element={
+                            <MyBids
+                              playerInfo={playerInfo}
+                              money={money}
+                              setMoney={setMoney}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/myAuctions"
+                          element={
+                            <MyAuctions
+                              playerInfo={playerInfo}
+                              money={money}
+                              setMoney={setMoney}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/achievements"
+                          element={<AchievementList userId={playerInfo.id} />}
+                        />
+                        <Route 
+                          path="/paymentError" 
+                          element={<PaymentError />} 
+                        />
+                        <Route
+                          path="/store"
+                          element={<Store email={playerInfo.email} />}
+                        />
+                        <Route
+                          path="/musicUpload"
+                          element={<MusicUploadPage />}
+                        />
+                        <Route
+                          path="/musicLibraryPage"
+                          element={<MusicLibraryPage />}
+                        />
+                      </Routes>
                     </main>
                   )}
                 </>
@@ -254,6 +269,6 @@ export default function App() {
           </div>
         </div>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
