@@ -33,14 +33,14 @@ exports.handler = async (event) => {
         const email = eventBody?.data?.object?.customer_details?.email?.trim().toLowerCase();
         let paymentAmount = eventBody?.data?.object?.amount_total;
 
+        // Updated credit mappings based on the provided image
         switch (paymentAmount) {
-            case 2599: paymentAmount = 25000; break;
-            case 199: paymentAmount = 2000; break;
-            case 449: paymentAmount = 5000; break;
-            case 899: paymentAmount = 15000; break;
-            case 1999: paymentAmount = 25000; break;
-            case 4499: paymentAmount = 50000; break;
-            case 8999: paymentAmount = 100000; break;
+            case 199: paymentAmount = 50000; break;   // $1.99 for 50,000 CR
+            case 399: paymentAmount = 100000; break;  // $3.99 for 100,000 CR
+            case 699: paymentAmount = 200000; break;  // $6.99 for 200,000 CR
+            case 1099: paymentAmount = 300000; break; // $10.99 for 300,000 CR
+            case 1599: paymentAmount = 500000; break; // $15.99 for 500,000 CR
+            case 2599: paymentAmount = 1000000; break; // $25.99 for 1,000,000 CR
             default: paymentAmount = 0;
         }
 

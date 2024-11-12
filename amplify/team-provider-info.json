@@ -25,7 +25,7 @@
       "function": {
         "carsnipeFunction": {
           "deploymentBucketName": "amplify-carsnipe-dev-2d51b-deployment",
-          "s3Key": "amplify-builds/carsnipeFunction-6f6455504e483362586b-build.zip"
+          "s3Key": "amplify-builds/carsnipeFunction-52754a39473035394878-build.zip"
         }
       }
     }
