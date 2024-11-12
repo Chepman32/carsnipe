@@ -30,6 +30,13 @@ const awsmobile = {
     "aws_appsync_region": "us-east-2",
     "aws_appsync_authenticationType": "API_KEY",
     "aws_appsync_apiKey": "da2-shczi6kl2rawrgzy5yorep5h3q",
+    "aws_cloud_logic_custom": [
+        {
+            "name": "carsnipeRESTAPI",
+            "endpoint": "https://u6gg9r29bg.execute-api.us-east-2.amazonaws.com/dev",
+            "region": "us-east-2"
+        }
+    ],
     "aws_user_files_s3_bucket": "musicbucket2d51b-dev",
     "aws_user_files_s3_bucket_region": "us-east-2"
 };

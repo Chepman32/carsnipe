@@ -16,10 +16,17 @@
         "carsnipec9a5b799": {}
       },
       "api": {
-        "carsnipe": {}
+        "carsnipe": {},
+        "carsnipeRESTAPI": {}
       },
       "storage": {
         "music": {}
+      },
+      "function": {
+        "carsnipeFunction": {
+          "deploymentBucketName": "amplify-carsnipe-dev-2d51b-deployment",
+          "s3Key": "amplify-builds/carsnipeFunction-6f6455504e483362586b-build.zip"
+        }
       }
     }
   }
