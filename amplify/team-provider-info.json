@@ -1,28 +1,4 @@
 {
-  "master": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-carsnipe-master-3c461-authRole",
-      "UnauthRoleArn": "arn:aws:iam::162721372843:role/amplify-carsnipe-master-3c461-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::162721372843:role/amplify-carsnipe-master-3c461-authRole",
-      "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-carsnipe-master-3c461-deployment",
-      "UnauthRoleName": "amplify-carsnipe-master-3c461-unauthRole",
-      "StackName": "amplify-carsnipe-master-3c461",
-      "StackId": "arn:aws:cloudformation:us-east-2:162721372843:stack/amplify-carsnipe-master-3c461/689583e0-9d23-11ef-b68a-06a3785303b1",
-      "AmplifyAppId": "d4i8znsv1814z"
-    },
-    "categories": {
-      "auth": {
-        "carsnipec9a5b799": {}
-      },
-      "storage": {
-        "music": {}
-      },
-      "api": {
-        "carsnipe": {}
-      }
-    }
-  },
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-carsnipe-dev-2d51b-authRole",
