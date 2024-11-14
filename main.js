@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 
-let mainWindow; // Use 'let' instead of 'const'
+let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -12,7 +12,7 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       nodeIntegration: false,
-      webSecurity: false // Disables CORS and allows file:// protocol
+      webSecurity: false
     }
   });
 
@@ -22,6 +22,18 @@ function createWindow() {
   } else {
     mainWindow.loadFile(path.join(__dirname, 'build', 'index.html'));
   }
+
+  // Handle external navigation to localhost
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url.includes('localhost')) {
+      event.preventDefault();
+      if (isDev) {
+        mainWindow.loadURL('http://localhost:3000');
+      } else {
+        mainWindow.loadFile(path.join(__dirname, 'build', 'index.html'));
+      }
+    }
+  });
 
   // Define the custom menu template
   const menuTemplate = [
@@ -66,7 +78,7 @@ function createWindow() {
   Menu.setApplicationMenu(menu);
 
   mainWindow.on('closed', () => {
-    mainWindow = null; // Reassign to null when window is closed
+    mainWindow = null;
   });
 }
 
