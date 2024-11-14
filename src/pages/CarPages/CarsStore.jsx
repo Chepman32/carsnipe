@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Button, Modal, Form, Input, message, Select, Typography, Spin } from "antd";
+import { Button, Modal, Form, Input, message, Select, Spin } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import { listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
@@ -14,13 +14,13 @@ const client = generateClient();
 
 const CarsStore = ({ playerInfo, setMoney, money }) => {
  const [cars, setCars] = useState([]);
- const [visible, setVisible] = useState(false);
+ const [visible, setVisible] = useState(false); // Controls Create New Car modal visibility
  const [loadingBuy, setLoadingBuy] = useState(false);
  const [selectedCar, setSelectedCar] = useState(null);
  const [form] = Form.useForm();
  const [carDetailsVisible, setCarDetailsVisible] = useState(false);
-  const [selectedCarIndex, setSelectedCarIndex] = useState(0);
-  const [creditWarningModalvisible, setCreditWarningModalvisible] = useState(false);
+ const [selectedCarIndex, setSelectedCarIndex] = useState(0);
+ const [creditWarningModalvisible, setCreditWarningModalvisible] = useState(false);
  const [carsLoading, setCarsLoading] = useState(true);
 
  const carsContainerRef = useRef(null);
@@ -43,74 +43,69 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
    fetchAllCars();
  }, [fetchCars]);
 
- useEffect(() => {
-   const handleKeyDown = (event) => {
-     const { key } = event;
-     const carsCount = cars.length;
-     if (key === "ArrowRight" && !carDetailsVisible) {
-      playSwitchSound()
-       setSelectedCarIndex((prevIndex) => (prevIndex + 1) % carsCount);
-     } else if (key === "ArrowLeft" && !carDetailsVisible) {
-      playSwitchSound()
-       setSelectedCarIndex((prevIndex) => (prevIndex - 1 + carsCount) % carsCount);
-     } else if (key === "ArrowDown" && !carDetailsVisible) {
-      playSwitchSound()
-       setSelectedCarIndex((prevIndex) => (prevIndex + 5) % carsCount); // Move down by 5 cars
-     } else if (key === "ArrowUp" && !carDetailsVisible) {
-      playSwitchSound()
-       setSelectedCarIndex((prevIndex) => (prevIndex - 5 + carsCount) % carsCount); // Move up by 5 cars
-     } else if (key === "Enter" && !carDetailsVisible) {
-       setSelectedCar(cars[selectedCarIndex]);
-       playOpeningSound();
-       showCarDetailsModal();
-     }
-   };
+ const handleKeyDown = useCallback((event) => {
+   const { key } = event;
+   const carsCount = cars.length;
+   if (key === "ArrowRight" && !carDetailsVisible) {
+      playSwitchSound();
+      setSelectedCarIndex((prevIndex) => (prevIndex + 1) % carsCount);
+   } else if (key === "ArrowLeft" && !carDetailsVisible) {
+      playSwitchSound();
+      setSelectedCarIndex((prevIndex) => (prevIndex - 1 + carsCount) % carsCount);
+   } else if (key === "ArrowDown" && !carDetailsVisible) {
+      playSwitchSound();
+      setSelectedCarIndex((prevIndex) => (prevIndex + 5) % carsCount);
+   } else if (key === "ArrowUp" && !carDetailsVisible) {
+      playSwitchSound();
+      setSelectedCarIndex((prevIndex) => (prevIndex - 5 + carsCount) % carsCount);
+   } else if (key === "Enter" && !carDetailsVisible) {
+      setSelectedCar(cars[selectedCarIndex]);
+      playOpeningSound();
+      showCarDetailsModal();
+   }
+ }, [cars, selectedCarIndex, carDetailsVisible]);
 
+ useEffect(() => {
    document.addEventListener("keydown", handleKeyDown);
    return () => {
      document.removeEventListener("keydown", handleKeyDown);
    };
- }, [cars, selectedCarIndex, carDetailsVisible]);
+ }, [handleKeyDown]);
 
  const buyCar = async (car) => {
-  if (playerInfo && playerInfo.id && money >= car.price) {
-    playSwitchSound();
-    setMoney(money - car.price);
-    try {
-      setLoadingBuy(true);
-
-      await client.graphql({
-        query: mutations.updateUser,
-        variables: {
-          input: {
-            id: playerInfo.id,
-            money: money - car.price,
-            totalSpent: (playerInfo.totalSpent || 0) + car.price
-          },
-        },
-      });
-
-      createNewUserCar(playerInfo.id, car.id);
-      message.success('Car successfully bought!');
-    } catch (err) {
-      console.log(err);
-      message.error('Error buying car');
-    } finally {
-      setLoadingBuy(false);
-      setSelectedCar(null);
-    }
-  }
-  else if (playerInfo && money < car.price) {
-    setCreditWarningModalvisible(true);
-    handleCarDetailsCancel();
-    return
-  }
-  await checkAndUpdateAchievements(playerInfo);
-};
-
- const showCarDetailsModal = () => {
-   setCarDetailsVisible(true);
+   if (playerInfo && playerInfo.id && money >= car.price) {
+     playSwitchSound();
+     setMoney(money - car.price);
+     try {
+       setLoadingBuy(true);
+       await client.graphql({
+         query: mutations.updateUser,
+         variables: {
+           input: {
+             id: playerInfo.id,
+             money: money - car.price,
+             totalSpent: (playerInfo.totalSpent || 0) + car.price
+           },
+         },
+       });
+       createNewUserCar(playerInfo.id, car.id);
+       message.success('Car successfully bought!');
+     } catch (err) {
+       console.log(err);
+       message.error('Error buying car');
+     } finally {
+       setLoadingBuy(false);
+       setSelectedCar(null);
+     }
+   } else if (playerInfo && money < car.price) {
+     setCreditWarningModalvisible(true);
+     handleCarDetailsCancel();
+     return;
+   }
+   await checkAndUpdateAchievements(playerInfo);
  };
+
+ const showCarDetailsModal = () => setCarDetailsVisible(true);
 
  const handleCancel = () => {
    playClosingSound();
@@ -130,14 +125,19 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
      price: parseInt(values.price),
      type: values.type,
    };
-   await client.graphql({
-     query: mutations.createCar,
-     variables: { input: newCar },
-   });
-   await fetchCars();
-   setVisible(false);
-   form.resetFields();
-   message.success('Car created successfully!');
+   try {
+     await client.graphql({
+       query: mutations.createCar,
+       variables: { input: newCar },
+     });
+     message.success('Car created successfully!');
+     await fetchCars(); // Refetch cars after adding a new one
+     setVisible(false);
+     form.resetFields();
+   } catch (error) {
+     console.error("Error creating car:", error);
+     message.error('Failed to create car');
+   }
  };
 
  const getImageSource = (make, model) => {
@@ -147,21 +147,21 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
 
  return (
    <div className="cars">
-     {/* <Button type="primary" style={{ marginBottom: '20px' }}>
+     <Button type="primary" style={{ marginBottom: '20px' }} onClick={() => setVisible(true)}>
        Create New Car
-     </Button> */}
+     </Button>
      {carsLoading ? (
-       <Spin size="large" fullscreen/>
+       <Spin size="large" fullscreen />
      ) : (
-       <div ref={carsContainerRef} className="cars__container" >
+       <div ref={carsContainerRef} className="cars__container">
          {cars.length && cars.map((car, index) => (
            <CarCard
-             key={car.id + Math.random()}
+             key={car.id}
              selectedCar={index === selectedCarIndex ? car : null}
              setSelectedCar={(car) => {
-               setSelectedCar(car)
-               setSelectedCarIndex(index)
-               showCarDetailsModal()
+               setSelectedCar(car);
+               setSelectedCarIndex(index);
+               showCarDetailsModal();
              }}
              showCarDetailsModal={showCarDetailsModal}
              car={car}
@@ -181,20 +181,11 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
        onOk={() => {
          form
            .validateFields()
-           .then((values) => {
-             createNewCar(values);
-           })
-           .catch((info) => {
-             console.log('Validate Failed:', info);
-           });
+           .then((values) => createNewCar(values))
+           .catch((info) => console.log('Validate Failed:', info));
        }}
      >
-       <Form
-         form={form}
-         layout="vertical"
-         initialValues={{ remember: true }}
-         onFinish={(values) => createNewCar(values)}
-       >
+       <Form form={form} layout="vertical" onFinish={(values) => createNewCar(values)}>
          <Form.Item name="make" label="Make" rules={[{ required: true, message: 'Please enter the make!' }]}>
            <Input autoFocus />
          </Form.Item>

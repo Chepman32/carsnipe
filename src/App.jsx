@@ -1,4 +1,3 @@
-// App.js
 import React, { useCallback, useEffect, useState } from "react";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
@@ -36,7 +35,9 @@ function BackspaceHandler() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Backspace") {
+      // Check if the Backspace key is pressed and no input field is focused
+      if (event.key === "Backspace" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+        event.preventDefault();
         navigate(-1); // Navigate back to the previous page
       }
     };

@@ -31,7 +31,8 @@
     "electron": "electron .",
     "electron-dev": "NODE_ENV=development electron .",
     "package": "electron-packager . carsnipe --platform=win32 --arch=x64 --out=dist",
-    "package-mac": "electron-builder --mac --x64"
+    "package-mac": "electron-builder --mac --x64",
+    "package-win": "electron-builder --win --x64"
   },
   "build": {
     "appId": "com.yourapp.carsnipe",
@@ -39,6 +40,10 @@
     "mac": {
       "target": "dmg",
       "icon": "public/appIcon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/appIcon.ico"
     },
     "files": [
       "build/**/*",
