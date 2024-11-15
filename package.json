@@ -53,6 +53,10 @@
       "node_modules/**/*"
     ],
     "extraResources": [
+      {
+        "from": "node_modules/electron/dist/ffmpeg.dll",
+        "to": "ffmpeg.dll"
+      },
       "public"
     ],
     "directories": {
