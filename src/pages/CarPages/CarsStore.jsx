@@ -147,9 +147,9 @@ const CarsStore = ({ playerInfo, setMoney, money }) => {
 
  return (
    <div className="cars">
-     <Button type="primary" style={{ marginBottom: '20px' }} onClick={() => setVisible(true)}>
+     {/* <Button type="primary" style={{ marginBottom: '20px' }} onClick={() => setVisible(true)}>
        Create New Car
-     </Button>
+     </Button> */}
      {carsLoading ? (
        <Spin size="large" fullscreen />
      ) : (
