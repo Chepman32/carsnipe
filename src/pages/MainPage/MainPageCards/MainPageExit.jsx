@@ -1,18 +1,21 @@
 import React from 'react';
 import { Typography } from 'antd';
-import { Link } from 'react-router-dom';
 
 const MainPageExit = ({ focused, handleMouseEnter }) => {
+  const handleExit = () => {
+    window.api.quitApp();
+  };
+
   return (
-    <Link
-      to="/profileEditPage"
+    <div
       className={`tile ${focused ? 'focused' : ''}`}
+      onClick={handleExit}
       onMouseEnter={() => handleMouseEnter('exitBtn')}
     >
       <Typography.Text className="mainpage__cardText_black">
-        Exit
+        Quit
       </Typography.Text>
-    </Link>
+    </div>
   );
 };
 

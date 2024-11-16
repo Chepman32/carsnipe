@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -23,7 +23,6 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, 'build', 'index.html'));
   }
 
-  // Handle external navigation to localhost
   mainWindow.webContents.on('will-navigate', (event, url) => {
     if (url.includes('localhost')) {
       event.preventDefault();
@@ -35,7 +34,6 @@ function createWindow() {
     }
   });
 
-  // Define the custom menu template
   const menuTemplate = [
     {
       label: 'File',
@@ -73,7 +71,6 @@ function createWindow() {
     }
   ];
 
-  // Create the menu from the template and set it as the application menu
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
@@ -81,6 +78,10 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+ipcMain.on('quit-app', () => {
+  app.quit();
+});
 
 app.whenReady().then(createWindow);
 
