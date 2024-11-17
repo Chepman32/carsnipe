@@ -1,48 +1,59 @@
 import React, { useState, useRef } from "react";
+import { carImages } from "../../constants";
 import "./SlotMachine.css";
 
-const symbols = ["🍒", "🍋", "🍇", "🍊", "💎", "7️⃣"];
-
 const SlotMachine = () => {
-  const [credits, setCredits] = useState(100);
+  const [credits, setCredits] = useState(10000);
   const [spinning, setSpinning] = useState(false);
-  const reelRefs = useRef([]);
+  const reelRef = useRef(null);
 
   const initializeReel = () => {
-    const symbolsSequence = [...symbols, ...symbols, ...symbols];
-    return symbolsSequence.map((symbol, index) => (
+    const carsSequence = [...carImages, ...carImages, ...carImages];
+    return carsSequence.map((car, index) => (
       <div key={index} className="symbol">
-        {symbol}
+        <div className="car-info">
+          <h3>{`${car.make.toUpperCase()} ${car.model.toUpperCase()} ${
+            car.year ? car.year : ""
+          }`}</h3>
+          <p>{car.make.toUpperCase()}</p>
+        </div>
+        <img
+          src={car.image}
+          alt={`${car.make} ${car.model}`}
+          className="car-image"
+        />
       </div>
     ));
   };
 
-  const getRandomSymbol = () => {
-    return symbols[Math.floor(Math.random() * symbols.length)];
+  const getRandomCar = () => {
+    return carImages[Math.floor(Math.random() * carImages.length)];
   };
 
-  const animateReel = (reel, finalSymbol, delay) => {
+  const animateReel = (finalCar) => {
     return new Promise((resolve) => {
+      const symbolHeight = 250;
+      const container = reelRef.current;
+      const finalCarIndex = carImages.findIndex(
+        (car) => car.make === finalCar.make && car.model === finalCar.model
+      );
+      const totalHeight =
+        symbolHeight * carImages.length * 3 + symbolHeight * finalCarIndex;
+
+      container.style.transition = "none";
+      container.style.transform = "translateY(0px)";
+
       setTimeout(() => {
-        const symbolHeight = 200;
-        const container = reelRefs.current[reel];
-        const finalSymbolIndex = symbols.indexOf(finalSymbol);
-        const fullRotationHeight = -(symbols.length * symbolHeight * 3); // Roll 3 loops
+        container.style.transition = "transform 3s cubic-bezier(0.25, 0.8, 0.5, 1)";
+        container.style.transform = `translateY(-${totalHeight}px)`;
+      }, 50);
 
-        container.style.transition = "none";
-        container.style.top = "0px";
-
-        const forceReflow = container.offsetHeight; // Force reflow
-        container.style.transition = "top 2s cubic-bezier(.45,.05,.55,.95)";
-        container.style.top = `${fullRotationHeight}px`;
-
-        setTimeout(() => {
-          // Stop the animation and immediately snap to the final symbol
-          container.style.transition = "none";
-          container.style.top = `-${finalSymbolIndex * symbolHeight}px`;
-          resolve();
-        }, 2000);
-      }, delay);
+      setTimeout(() => {
+        // Add a slight bounce effect
+        container.style.transition = "transform 0.5s ease-out";
+        container.style.transform = `translateY(-${symbolHeight * finalCarIndex}px)`;
+        resolve();
+      }, 2000);
     });
   };
 
@@ -52,30 +63,18 @@ const SlotMachine = () => {
     setSpinning(true);
     setCredits((prevCredits) => prevCredits - 10);
 
-    const results = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
-
-    const spinPromises = reelRefs.current.map((_, index) =>
-      animateReel(index, results[index], index * 250)
-    );
-
-    await Promise.all(spinPromises);
+    const result = getRandomCar();
+    await animateReel(result);
 
     setSpinning(false);
   };
 
   return (
     <div className="slot-machine">
-      <div className="reels">
-        {[0, 1, 2].map((reel) => (
-          <div key={reel} className="reel">
-            <div
-              ref={(el) => (reelRefs.current[reel] = el)}
-              className="reel-container"
-            >
-              {initializeReel()}
-            </div>
-          </div>
-        ))}
+      <div className="reel">
+        <div ref={reelRef} className="reel-container">
+          {initializeReel()}
+        </div>
       </div>
       <button
         className="spin-button"
