@@ -3,6 +3,7 @@ import "./store.css";
 import coin_symbol from "../../assets/icons/coin_symbol.png"
 import { Link } from "react-router-dom";
 import SlotMachine from "../../components/SlotMachine/SlotMachine";
+import { carImages } from "../../constants";
 
 const StoreItemCard = ({ item, email, username }) => {
   const [isBouncing, setIsBouncing] = useState(false);
@@ -73,6 +74,7 @@ const Store = ({ email, username }) => {
           <StoreItemCard key={item.id} item={item} email={email} username={username} />
       ))}
       </section>
+      <SlotMachine cars={carImages} />
     </div>
   );
 };
