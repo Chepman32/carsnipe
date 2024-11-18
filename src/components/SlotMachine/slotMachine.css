@@ -1,74 +1,56 @@
-.reel {
-  width: 600px;
-  height: 250px;
-  overflow: hidden;
-  margin: 20px auto;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  position: relative;
-  background: linear-gradient(to right, #d4f0ff, #a4dcff);
-}
-
-.reel-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+.slot-machine {
   display: flex;
   flex-direction: column;
-  will-change: transform; /* Optimize for smoother animations */
-}
-
-.symbol {
-  height: 250px;
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-}
-
-.car-info {
-  width: 50%;
-  text-align: left;
   font-family: Arial, sans-serif;
-  color: #333;
 }
 
-.car-info h3 {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
+.slot-reel {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
-.car-info p {
-  font-size: 18px;
-  font-weight: bold;
-  color: #666;
+.slot-item {
+  width: 100%; /* Full width within slot-char */
+  height: 33vh !important;
+  object-fit: contain; /* Ensure no cropping occurs */
+  margin-bottom: 100px;
 }
 
-.car-image {
-  width: 40%;
-  max-width: 250px;
-  height: auto;
+.slot-container {
+  width: 400px; /* Fixed width for the container */
+  height: 33vh !important;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+
+.slot-char {
+  display: flex; /* Ensure images stack properly */
+  align-items: center;
+  justify-content: center;
+  height: 33vh !important;
+  width: 400px; /* Match container width */
 }
 
 .spin-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff;
+  font-size: 24px;
+  padding: 15px 30px;
+  background-color: #ff6f61;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
 }
 
-.spin-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.spin-button:hover {
+  background-color: #ff4435;
 }
 
-.spin-button:hover:enabled {
-  background-color: #0056b3;
+.React Slot Counter {
+  height: 33vh !important;
 }
+
