@@ -19,9 +19,9 @@ const SlotMachine = () => {
           dummyCharacters={carImages.map((ci, i) => (
             <img key={i} src={ci.image} alt={`Slot item ${i}`} className="slot-item" />
           ))}
-          duration={1.5}
-          speed={20}
-          direction="'top-down"
+          duration={3.0}
+          speed={10}
+          direction="top-bottom"
           hasInfiniteList
           containerClassName="slot-container"
           charClassName="slot-char"
