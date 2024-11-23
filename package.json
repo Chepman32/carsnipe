@@ -32,38 +32,39 @@
     "electron-dev": "NODE_ENV=development electron .",
     "package": "electron-packager . carsnipe --platform=win32 --arch=x64 --out=dist",
     "package-mac": "electron-builder --mac --x64",
-    "package-win": "electron-builder --win --x64"
+    "package-win": "electron-builder --win --x64",
+    "package-linux": "electron-builder --linux AppImage --x64"
   },
   "build": {
     "appId": "com.yourapp.carsnipe",
     "productName": "Carsnipe",
-    "mac": {
-      "target": "dmg",
-      "icon": "public/appIcon.icns"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "public/appIcon.ico"
-    },
     "files": [
       "build/**/*",
       "main.js",
       "preload.js",
-      "src/aws-exports.js",
-      "node_modules/**/*"
+      "package.json"
     ],
-    "extraResources": [
-      {
-        "from": "node_modules/electron/dist/ffmpeg.dll",
-        "to": "ffmpeg.dll"
-      },
-      "public"
-    ],
-    "directories": {
-      "output": "dist"
-    },
     "extraMetadata": {
       "main": "main.js"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/appIcon.ico"
+    },
+    "nsis": {
+      "include": "resources/installer.nsh",
+      "license": "resources/license.txt",
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/installer-icon.ico",
+      "uninstallerIcon": "build/uninstaller-icon.ico",
+      "shortcutName": "Carsnipe"
+    },
+    "directories": {
+      "output": "dist"
     }
   },
   "eslintConfig": {
